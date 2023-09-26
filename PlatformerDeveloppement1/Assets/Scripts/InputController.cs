@@ -35,5 +35,19 @@ public class InputController : MonoBehaviour
         {
             playerMovement.Dash();
         }
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            playerMovement.PressJumpButton();
+        }
+        else if(Input.GetButton("Fire1"))
+        {
+            playerMovement.HoldJumpButton();
+        }
+        // else if (Input.GetButtonUp("Jump"))
+        // {
+        //     playerMovement.StopPressJumpButton();
+        //     // float jumpHeight = Mathf.Clamp01((Time.time - jumpTime) / maxJumpTime);
+        // }
     }
 }
