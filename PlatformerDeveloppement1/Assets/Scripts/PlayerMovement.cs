@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class PlayerMovement : MonoBehaviour
 {
 
-    [Header("HorizontalMovement")]
+    [Header("Basic Horizontal Movement")]
     //HorizontalMovement
     [SerializeField] private float maxSpeed = 5;
     [SerializeField] private float detectionCollisionOffset = -0.1f;
     [SerializeField] private float inertiaValue = 8;
+    private float currentMaxSpeed;
     private float speed;
     private float lastX;
     private BoxCollider2D boxCollider;
@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDistance = 10;
     [SerializeField] private float dashCooldown = 1f;
     private float dashCooldownTimer = 0;
+    [Header("Sprint")]
+    [SerializeField] private float sprintSpeed = 8;
 
 
 
@@ -101,8 +103,16 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            speed = Mathf.Min(maxSpeed, speed + Time.deltaTime * inertiaValue);
+            speed = Mathf.Min(currentMaxSpeed, speed + Time.deltaTime * inertiaValue);
             lastX = x;
         }
+    }
+    public void Sprint()
+    {
+        currentMaxSpeed = sprintSpeed;
+    }
+    public void StopSprint()
+    {
+        currentMaxSpeed = Mathf.Max(maxSpeed, currentMaxSpeed -= Time.deltaTime * inertiaValue);
     }
 }

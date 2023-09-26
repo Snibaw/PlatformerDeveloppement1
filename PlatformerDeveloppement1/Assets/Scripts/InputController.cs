@@ -15,23 +15,25 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovementPlayer();
-        
-
-    }
-    private void MovementPlayer()
-    {
-        //Horizontal Movement
-        x = Input.GetAxis("Horizontal");
-        y = Input.GetAxis("Vertical");
+        x = Input.GetAxisRaw("Horizontal");
+        y = Input.GetAxisRaw("Vertical");
 
         playerMovement.Move(x);
 
-        //Dash When Player press left button on controller
+        //Sprint When Player press B on controller
+        if (Input.GetButton("Fire2"))
+        {
+            playerMovement.Sprint();
+        }
+        else
+        {
+            playerMovement.StopSprint();
+        }
+
+        //Dash When Player press X on controller or Left Shift on keyboard 
         if (Input.GetButtonDown("Fire3"))
         {
             playerMovement.Dash();
         }
-        
     }
 }
