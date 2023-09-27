@@ -151,8 +151,8 @@ Transform:
   m_GameObject: {fileID: 86770264}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.000893, y: 2.3338728, z: 0}
-  m_LocalScale: {x: 0.6219362, y: 10.030759, z: 1}
+  m_LocalPosition: {x: -9.000893, y: 2.3565, z: 0}
+  m_LocalScale: {x: 0.6219362, y: 10.03076, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1581282178}
@@ -770,10 +770,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1392946845}
   - component: {fileID: 1392946844}
-  - component: {fileID: 1392946843}
-  - component: {fileID: 1392946842}
   - component: {fileID: 1392946841}
   - component: {fileID: 1392946840}
+  - component: {fileID: 1392946843}
+  - component: {fileID: 1392946842}
   m_Layer: 2
   m_Name: Player
   m_TagString: Player
@@ -799,12 +799,16 @@ MonoBehaviour:
   dashDistance: 2
   dashCooldown: 1
   sprintSpeed: 8
-  detectionCollisionOffsetY: -0.123
-  isGrounded: 1
+  detectionCollisionOffsetY: 0.1
   maxJumpPower: 0.15
   decayJumpPower: 0.0005
   maxJumpTime: 0.3
   gravity: 0.4
+  aerialHorizontalSpeedMultiplier: 0.7
+  slidingSpeedY: -0.03
+  wallJumpHorizontalForceMax: 10
+  wallJumpHorizontalForceDecay: 20
+  timeBetweenWallJumpAndMovement: 0.15
 --- !u!114 &1392946841
 MonoBehaviour:
   m_ObjectHideFlags: 0

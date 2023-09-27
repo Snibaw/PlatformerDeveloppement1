@@ -22,7 +22,7 @@ public class InputController : MonoBehaviour
         playerMovement.Move(x);
 
         //Sprint When Player press B on controller
-        if (Input.GetButton("Fire2"))
+        if (Input.GetButtonDown("Fire2"))
         {
             playerMovement.Sprint();
         }
