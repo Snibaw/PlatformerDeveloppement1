@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float aerialHorizontalSpeedMultiplier = 0.7f;
     [SerializeField] private float slidingSpeedY = 0.3f;
     public bool isSliding = false;
-    private float platformSpeed;
+    private Vector3 platformDirection;
 
     [Header("Wall Jump")]
     [SerializeField] 
@@ -123,8 +123,8 @@ public class PlayerMovement : MonoBehaviour
             //For moving platform
             if(hitReturn.collider.gameObject.name == "MovingPlatform")
             {
-                platformSpeed = hitReturn.collider.gameObject.GetComponent<MovingPlatformBehaviour>().speed;
-                transform.position += new Vector3(platformSpeed * Time.deltaTime, 0, 0);
+                platformDirection = hitReturn.collider.gameObject.GetComponent<MovingPlatformBehaviour>().GetDirection();
+                transform.position += platformDirection * Time.deltaTime;
             }
 
             //Start coyotteTime and Check for bufferJump
