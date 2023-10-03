@@ -38,11 +38,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isJumping;
     private float timeJumpButtonPressed;
     private bool hasCollideY = false;
+    private bool collideWithTop = false;
 
     [Header("Environmental Speed")]
     [SerializeField] private float aerialHorizontalSpeedMultiplier = 0.7f;
     [SerializeField] private float slidingSpeedY = 0.3f;
-    private bool isSliding = false;
+    public bool isSliding = false;
 
     [Header("Wall Jump")]
     [SerializeField] 
@@ -55,6 +56,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] 
     private float timeBetweenWallJumpAndMovement = 0.2f;
     private float timeSinceLastWallJump = 0;
+
+    [Header("CoyotteTime & bufferJump")]
+    [SerializeField] private float coyotteTime = 0.2f;
+    [SerializeField] private float bufferJump = 0.2f;
+    private float coyotteTimeTimer = 0;
+    private float bufferJumpTimer = 0;
+    
     
 
     RaycastHit2D hitReturn;
@@ -74,8 +82,11 @@ public class PlayerMovement : MonoBehaviour
     {
         dashCooldownTimer -= Time.deltaTime;
         timeSinceLastWallJump += Time.deltaTime;
+        coyotteTimeTimer -= Time.deltaTime;
+        bufferJumpTimer -= Time.deltaTime;
 
         GroundManagement();
+        FloorManagement();
 
         GravityManagement();
     }
@@ -84,14 +95,14 @@ public class PlayerMovement : MonoBehaviour
         //Apply gravity if the player is not grounded
         if (!isGrounded)
         {
-            if(!isCollidingWithObstacle || speedY >= 0) // If the player is sliding on a wall, the speed must be constant and not decrease
+            if(isCollidingWithObstacle && speedY < 0 && !collideWithTop) // If the player is sliding on a wall, the speed must be constant and not decrease
             {
-                speedY -= gravity * Time.deltaTime;
-                isSliding = false;
+                isSliding = true;
             }
             else
             {
-                isSliding = true;
+                speedY -= gravity * Time.deltaTime;
+                isSliding = false;
             }
         }   
         else
@@ -107,8 +118,15 @@ public class PlayerMovement : MonoBehaviour
     private void GroundManagement()
     {
         float raycastLength = boxCollider.size.y/4 + Mathf.Abs(speedY) * Time.deltaTime;
-        if (DetectCollision(transform.position - new Vector3(0, boxCollider.bounds.extents.y), Vector2.down, raycastLength, "Obstacle")) //Raycast to detect ground
+        Vector3 raycastPosition1 = transform.position - new Vector3(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+        Vector3 raycastPosition2 = transform.position - new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+        if (DetectCollision(raycastPosition1, new Vector3(0, -1, 0), raycastLength, "Obstacle") || DetectCollision(raycastPosition2, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
         {
+            if(bufferJumpTimer > 0)
+            {
+                PressJumpButton();
+            }
+            coyotteTimeTimer = coyotteTime;
             canDoubleJump = true;
             isGrounded = true;
             if(hasCollideY == false) // Tp the player to the ground if it's his future position (only once)
@@ -119,8 +137,27 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+
             hasCollideY = false;
             isGrounded = false;
+        }
+    }
+    private void FloorManagement()
+    {
+        float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
+        Vector3 raycastPosition1 = transform.position + new Vector3(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+        Vector3 raycastPosition2 = transform.position + new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+        Debug.DrawRay(raycastPosition1, new Vector3(0, 1, 0) * raycastLength, Color.red);
+        Debug.DrawRay(raycastPosition2, new Vector3(0, 1, 0) * raycastLength, Color.red);
+        if (DetectCollision(raycastPosition1, new Vector3(0, 1, 0), raycastLength, "Obstacle") || DetectCollision(raycastPosition2, new Vector3(0, 1, 0), raycastLength, "Obstacle"))
+        {
+            timeJumpButtonPressed = 2*maxJumpTime; // Stop the jump if the player is colliding with the ceiling
+            collideWithTop = true;
+            speedY = -speedY/2;
+        }
+        else
+        {
+            collideWithTop = false;
         }
     }
     public void Dash()
@@ -142,9 +179,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 raycastDirection = new Vector3( x == 0 ? lastX : x, 0, 0);
         float environmentalSpeedX = isGrounded ? speed : speed * aerialHorizontalSpeedMultiplier;
         float raycastLength = boxCollider.size.x/2 + Mathf.Abs(x) * environmentalSpeedX * Time.deltaTime;
+        Vector3 raycastPosition1 = transform.position - new Vector3(0, boxCollider.bounds.extents.y/2);
+        Vector3 raycastPosition2 = transform.position + new Vector3(0, boxCollider.bounds.extents.y/2);
         
         //Check if there is an obstacle in this direction
-        if(DetectCollision(transform.position, raycastDirection, raycastLength, "Obstacle"))
+        if(DetectCollision(raycastPosition1, raycastDirection, raycastLength, "Obstacle") || DetectCollision(raycastPosition2, raycastDirection, raycastLength, "Obstacle"))
         {
             if(raycastDirection.x > 0) wallIsOnTheRight = true;
             else if(raycastDirection.x < 0) wallIsOnTheRight = false;
@@ -218,11 +257,12 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = true;
             timeSinceLastWallJump = 0;
         }
-        else if(!isGrounded) 
+        else if(!isGrounded && coyotteTimeTimer < 0) 
         {
             if(!canDoubleJump)
             {
                 //Avoid hold jump button condition
+                bufferJumpTimer = bufferJump;
                 timeJumpButtonPressed = maxJumpTime;
                 return;
             }
@@ -232,6 +272,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         //Start jump
+        coyotteTimeTimer = -1;
         timeJumpButtonPressed = Time.deltaTime;
         jumpPower = maxJumpPower;
         Jump();
