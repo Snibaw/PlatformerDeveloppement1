@@ -6,7 +6,7 @@ public class MovingPlatformBehaviour : MonoBehaviour
 {
     [SerializeField] private Transform[] waypoints;
     [SerializeField] private Transform currentTarget;
-    [SerializeField] private float speed = 0.1f;
+    public float speed = 0.1f;
     private int currentIndex = 0;
     // Start is called before the first frame update
     void Start()

@@ -44,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float aerialHorizontalSpeedMultiplier = 0.7f;
     [SerializeField] private float slidingSpeedY = 0.3f;
     public bool isSliding = false;
+    private float platformSpeed;
 
     [Header("Wall Jump")]
     [SerializeField] 
@@ -62,9 +63,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float bufferJump = 0.2f;
     private float coyotteTimeTimer = 0;
     private float bufferJumpTimer = 0;
-    
-    
-
     RaycastHit2D hitReturn;
     // [SerializeField] private float testvalue = 1;
     
@@ -122,11 +120,20 @@ public class PlayerMovement : MonoBehaviour
         Vector3 raycastPosition2 = transform.position - new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
         if (DetectCollision(raycastPosition1, new Vector3(0, -1, 0), raycastLength, "Obstacle") || DetectCollision(raycastPosition2, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
         {
+            //For moving platform
+            if(hitReturn.collider.gameObject.name == "MovingPlatform")
+            {
+                platformSpeed = hitReturn.collider.gameObject.GetComponent<MovingPlatformBehaviour>().speed;
+                transform.position += new Vector3(platformSpeed * Time.deltaTime, 0, 0);
+            }
+
+            //Start coyotteTime and Check for bufferJump
             if(bufferJumpTimer > 0)
             {
                 PressJumpButton();
             }
             coyotteTimeTimer = coyotteTime;
+
             canDoubleJump = true;
             isGrounded = true;
             if(hasCollideY == false) // Tp the player to the ground if it's his future position (only once)
@@ -147,8 +154,6 @@ public class PlayerMovement : MonoBehaviour
         float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 = transform.position + new Vector3(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
         Vector3 raycastPosition2 = transform.position + new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
-        Debug.DrawRay(raycastPosition1, new Vector3(0, 1, 0) * raycastLength, Color.red);
-        Debug.DrawRay(raycastPosition2, new Vector3(0, 1, 0) * raycastLength, Color.red);
         if (DetectCollision(raycastPosition1, new Vector3(0, 1, 0), raycastLength, "Obstacle") || DetectCollision(raycastPosition2, new Vector3(0, 1, 0), raycastLength, "Obstacle"))
         {
             timeJumpButtonPressed = 2*maxJumpTime; // Stop the jump if the player is colliding with the ceiling
