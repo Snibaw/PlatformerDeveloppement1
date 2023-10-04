@@ -215,6 +215,8 @@ public class PlayerMovement : MonoBehaviour
             dashCooldownTimer = dashCooldown;
             isDashing = true;
             isGravityOn = false;
+            timeJumpButtonPressed = maxJumpTime * 2; //Avoid hold jump button condition
+            speedY = 0;
         }
     }
 
