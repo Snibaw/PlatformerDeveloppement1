@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private float jumpPower = 0;
     [SerializeField] private float maxJumpTime = 1;
     [SerializeField] private float gravity = 9.81f;
+    [SerializeField] private float gravityMultiplier = 1;
     [SerializeField] private bool isGravityOn = true;
     private float speedY;
     private bool canDoubleJump = true;
@@ -117,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                speedY -= gravity * Time.deltaTime;
+                speedY -= gravity * gravityMultiplier * Time.deltaTime;
                 isSliding = false;
             }
         }
@@ -133,6 +134,16 @@ public class PlayerMovement : MonoBehaviour
                 ? slidingSpeedY
                 : speedY; // If the player is sliding on a wall, apply a sliding speed multiplier
         transform.Translate(new Vector3(0, environmentalSpeedY, 0));
+    }
+    
+    //For fans and other stuff
+    public void AlterGravity(float multiplier)
+    {
+        gravityMultiplier = multiplier;
+    }
+    public void ResetGravity()
+    {
+        gravityMultiplier = 1f;
     }
 
     private void GroundManagement()
