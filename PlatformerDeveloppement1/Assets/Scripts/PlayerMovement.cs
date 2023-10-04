@@ -66,12 +66,14 @@ public class PlayerMovement : MonoBehaviour
     RaycastHit2D hitReturn;
     // [SerializeField] private float testvalue = 1;
     
-
+    private TrailRenderer trailRenderer;
+    [SerializeField] private float timeBtwRedAndWhiteTrailRenderer = 5f;
 
     private void Start() 
     {
         speed = 0;
         boxCollider = GetComponent<BoxCollider2D>();
+        trailRenderer = GetComponent<TrailRenderer>();
         dashCooldownTimer = 0;
         timeJumpButtonPressed = 0;
         isGrounded = false;
@@ -83,10 +85,16 @@ public class PlayerMovement : MonoBehaviour
         coyotteTimeTimer -= Time.deltaTime;
         bufferJumpTimer -= Time.deltaTime;
 
+        DecayTrailRendererColor();
+
         GroundManagement();
         FloorManagement();
 
         GravityManagement();
+    }
+    private void DecayTrailRendererColor()
+    {
+        trailRenderer.startColor = Color.Lerp(trailRenderer.startColor, Color.white, Time.deltaTime * timeBtwRedAndWhiteTrailRenderer);
     }
     private void GravityManagement()
     {
@@ -296,7 +304,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         speedY = jumpPower;
-        
+        trailRenderer.startColor = Color.red;
         if(wallJumpHorizontalForce == 0) return;
         float horizontalMovement = wallIsOnTheRight ? -wallJumpHorizontalForce : wallJumpHorizontalForce; // The force depends on the direction of the player before jumping
         transform.Translate(new Vector3(horizontalMovement, 0, 0) * Time.deltaTime);
