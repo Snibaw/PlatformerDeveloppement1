@@ -69,15 +69,24 @@ public class PlayerMovement : MonoBehaviour
     private float bufferJumpTimer = 0;
     RaycastHit2D hitReturn;
     // [SerializeField] private float testvalue = 1;
-
-    private TrailRenderer trailRenderer;
+    [Header("Other")]
     [SerializeField] private float timeBtwRedAndWhiteTrailRenderer = 5f;
+    private TrailRenderer trailRenderer;
+    [SerializeField] private GameObject playerSprite;
+    [SerializeField] private float roatationWhenMoving = 10f;
+
+    [Header("EchoEffect")]
+    [SerializeField] private float timeBtwEchoes = 0.1f;
+    [SerializeField] private int numberOfEchoes = 5;
+    private EchoEffect echoEffect;
+
 
     private void Start()
     {
         speed = 0;
         boxCollider = GetComponent<BoxCollider2D>();
         trailRenderer = GetComponent<TrailRenderer>();
+        echoEffect = GetComponent<EchoEffect>();
         dashCooldownTimer = 0;
         timeJumpButtonPressed = 0;
         isGrounded = false;
@@ -217,6 +226,7 @@ public class PlayerMovement : MonoBehaviour
             isGravityOn = false;
             timeJumpButtonPressed = maxJumpTime * 2; //Avoid hold jump button condition
             speedY = 0;
+            echoEffect.SetStartPos(transform.position);
         }
     }
 
@@ -226,6 +236,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (currentDashDuration < dashDuration)
             {
+                
                 //Check if there is an obstacle in this direction
                 if (DetectCollision(transform.position, new Vector3(lastX, 0, 0), dashDistance + boxCollider.size.x / 2,
                         "Obstacle"))
@@ -236,6 +247,8 @@ public class PlayerMovement : MonoBehaviour
                             (hitReturn.distance - detectionCollisionOffsetX - boxCollider.size.x / 2), 0, 0);
                     isDashing = false;
                     isGravityOn = true;
+                    echoEffect.SetEndPos(transform.position);
+                    StartCoroutine(echoEffect.SpawnEveryEchoes(timeBtwEchoes, numberOfEchoes));
                 }
                 else
                 {
@@ -249,6 +262,8 @@ public class PlayerMovement : MonoBehaviour
                 isDashing = false;
                 isGravityOn = true;
                 currentDashDuration = 0;
+                echoEffect.SetEndPos(transform.position);
+                StartCoroutine(echoEffect.SpawnEveryEchoes(timeBtwEchoes, numberOfEchoes));
             }
         }
     }
@@ -281,6 +296,10 @@ public class PlayerMovement : MonoBehaviour
         if (!isCollidingWithObstacle)
         {
             transform.Translate(new Vector3(x, 0, 0) * environmentalSpeedX * Time.deltaTime);
+        }
+        if(x != 0)
+        {
+            playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * roatationWhenMoving);
         }
 
         // This is for inertia
