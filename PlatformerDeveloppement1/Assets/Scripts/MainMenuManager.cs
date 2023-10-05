@@ -9,8 +9,6 @@ public class MainMenuManager : MonoBehaviour
     private void Start() {
         Invoke("CanStart", 1.25f);
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(canStart && Input.anyKeyDown){

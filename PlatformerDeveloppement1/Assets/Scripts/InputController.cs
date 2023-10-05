@@ -6,10 +6,12 @@ public class InputController : MonoBehaviour
 {
     private float x,y;
     private PlayerMovement playerMovement;
+    private CanvasManager canvasManager;
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
+        canvasManager = GameObject.Find("Canvas").GetComponent<CanvasManager>();
         playerMovement = GetComponent<PlayerMovement>();
     }
 
@@ -45,10 +47,13 @@ public class InputController : MonoBehaviour
         {
             playerMovement.HoldJumpButton();
         }
-        // else if (Input.GetButtonUp("Jump"))
-        // {
-        //     playerMovement.StopPressJumpButton();
-        //     // float jumpHeight = Mathf.Clamp01((Time.time - jumpTime) / maxJumpTime);
-        // }
+        
+
+        //Pause
+        //If player press Start on controller or Escape on keyboard
+        if (Input.GetButtonDown("Cancel"))
+        {
+            canvasManager.PlayerPressPauseButton();
+        }
     }
 }

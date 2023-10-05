@@ -9,7 +9,6 @@ public class MovingPlatformBehaviour : MonoBehaviour
     private Vector3 direction;
     [SerializeField] private float speed = 1.5f;
     private int currentIndex = 0;
-    // Start is called before the first frame update
     void Start()
     {
         currentTarget = waypoints[currentIndex];

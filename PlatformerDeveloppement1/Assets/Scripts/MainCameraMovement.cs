@@ -6,7 +6,6 @@ public class MainCameraMovement : MonoBehaviour
 {
     private Vector3 targetPosition;
     [SerializeField] private float speedFromOneLevelToAnother = 0.1f;
-    // Start is called before the first frame update
     public IEnumerator MoveCamera(Vector3 target)
     {
         targetPosition = target;

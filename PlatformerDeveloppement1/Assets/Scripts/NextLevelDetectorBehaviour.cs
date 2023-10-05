@@ -7,7 +7,6 @@ public class NextLevelDetectorBehaviour : MonoBehaviour
     private MainCameraMovement mainCam;
     [SerializeField] private Vector3 nextLevelCameraPosition;
     [SerializeField] private GameObject otherTP;
-    // Start is called before the first frame update
     void Start()
     {
         mainCam = Camera.main.GetComponent<MainCameraMovement>();

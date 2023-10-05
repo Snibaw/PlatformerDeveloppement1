@@ -7,7 +7,6 @@ public class EchoEffect : MonoBehaviour
     public GameObject echoPrefab;
     [SerializeField] private Transform transformCopyModel;
     private Vector3 startPos, endPos;
-    // Update is called once per frame
 
     public void SpawnEcho(Vector3 positionToSpawn)
     {
