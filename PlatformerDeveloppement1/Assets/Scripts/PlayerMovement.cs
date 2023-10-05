@@ -172,6 +172,15 @@ public class PlayerMovement : MonoBehaviour
                     hitReturn.collider.gameObject.GetComponent<MovingPlatformBehaviour>().GetDirection();
                 transform.position += platformDirection * Time.deltaTime;
             }
+            //For conveyor belt platform
+            if (hitReturn.collider.gameObject.name == "ConveyorBelt")
+            {
+                platformDirection =
+                    hitReturn.collider.gameObject.GetComponent<ConveyorBeltBehaviour>().GetDirection();
+                float platformSpeed =
+                    hitReturn.collider.gameObject.GetComponent<ConveyorBeltBehaviour>().GetSpeed();
+                transform.position += platformDirection * platformSpeed * Time.deltaTime;
+            }
 
             //Start coyotteTime and Check for bufferJump
             if (bufferJumpTimer > 0)
