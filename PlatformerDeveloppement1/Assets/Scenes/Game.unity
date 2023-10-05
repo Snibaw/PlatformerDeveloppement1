@@ -1074,10 +1074,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1088,7 +1088,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 99532345}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 451929043}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: ResumeGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &99532345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2383,6 +2395,7 @@ MonoBehaviour:
   - {fileID: 1134607254}
   - {fileID: 1805357848}
   - {fileID: 915441939}
+  setTimerText: {fileID: 1909091503}
   pauseFirstButton: {fileID: 99532342}
 --- !u!1 &482398575
 GameObject:
@@ -2441,7 +2454,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Main Menu
+  m_text: Quit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 47c8e8c816fc8314797baec7ae6300ed, type: 2}
   m_sharedMaterial: {fileID: 3995040553474157869, guid: 47c8e8c816fc8314797baec7ae6300ed, type: 2}
@@ -2468,7 +2481,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 43.6
+  m_fontSize: 56.4
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2902,7 +2915,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &669193507
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3379,7 +3392,7 @@ GameObject:
   - component: {fileID: 915441941}
   - component: {fileID: 915441944}
   m_Layer: 5
-  m_Name: MainMenuButton
+  m_Name: QuitButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3434,10 +3447,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -3448,7 +3461,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 915441942}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 451929043}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: QuitGameButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &915441942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3518,7 +3543,7 @@ GameObject:
   m_Component:
   - component: {fileID: 919916271}
   m_Layer: 5
-  m_Name: NoTimerButtonParent
+  m_Name: TimerButtonParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3624,7 +3649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1130247696}
   m_Layer: 5
-  m_Name: MainMenuButtonParent
+  m_Name: QuitButtonParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3664,7 +3689,7 @@ GameObject:
   - component: {fileID: 1134607256}
   - component: {fileID: 1134607259}
   m_Layer: 5
-  m_Name: NoTimerButton
+  m_Name: TimerButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3719,10 +3744,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -3733,7 +3758,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1134607257}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 451929043}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: TimerButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1134607257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5532,10 +5569,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 7f546a52900cc074d9de81341a675e89, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 27f66a6c2ac62644b8fb08b12001e8c6, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -5546,7 +5583,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1805357851}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 451929043}
+        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_MethodName: MainMenuButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1805357851
 MonoBehaviour:
   m_ObjectHideFlags: 0

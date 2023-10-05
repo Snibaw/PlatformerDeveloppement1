@@ -92,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = false;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         dashCooldownTimer -= Time.deltaTime;
         timeSinceLastWallJump += Time.deltaTime;
