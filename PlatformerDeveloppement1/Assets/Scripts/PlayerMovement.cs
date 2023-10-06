@@ -217,9 +217,12 @@ public class PlayerMovement : MonoBehaviour
     {
         float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 =
-            transform.position + new Vector3(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+            transform.position + new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
         Vector3 raycastPosition2 =
-            transform.position + new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+            transform.position + new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
+        
+        Debug.DrawRay(raycastPosition1, new Vector3(0, 1, 0) * raycastLength, Color.blue);
+        Debug.DrawRay(raycastPosition2, new Vector3(0, 1, 0) * raycastLength, Color.blue);
         if (DetectCollision(raycastPosition1, new Vector3(0, 1, 0), raycastLength, "Obstacle") ||
             DetectCollision(raycastPosition2, new Vector3(0, 1, 0), raycastLength, "Obstacle"))
         {
