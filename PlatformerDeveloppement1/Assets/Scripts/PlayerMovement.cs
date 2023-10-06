@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private float speed;
     private float lastX;
     private BoxCollider2D boxCollider;
-    private bool isCollidingWithObstacle = false;
+    [SerializeField] private bool isCollidingWithObstacle = false;
     private bool hasCollideX = false;
 
     [Header("Dash")]
@@ -30,8 +30,9 @@ public class PlayerMovement : MonoBehaviour
     private float dashCooldownTimer = 0;
     [Header("Sprint")] [SerializeField] private float sprintSpeed = 8;
 
-    [Header("Jump")] [SerializeField] private float detectionCollisionOffsetY = 0.1f;
-    private bool isGrounded;
+    [Header("Jump")] [SerializeField] private float replacementPositionYOffset = 0.1f;
+    [SerializeField] private float raycastPositionYOffset = 0.1f;
+    [SerializeField] private bool isGrounded;
     [SerializeField] private float maxJumpPower = 2;
     [SerializeField] private float decayJumpPower = 0.1f;
     private float jumpPower = 0;
@@ -157,11 +158,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void GroundManagement()
     {
-        float raycastLength = boxCollider.size.y / 4 + Mathf.Abs(speedY) * Time.deltaTime;
+        float raycastLength = boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 =
-            transform.position - new Vector3(boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+            transform.position - new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
         Vector3 raycastPosition2 =
-            transform.position - new Vector3(-boxCollider.bounds.extents.x, boxCollider.bounds.extents.y);
+            transform.position - new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
+
+        Debug.DrawRay(raycastPosition1, new Vector3(0, -1, 0) * raycastLength, Color.red);
+        Debug.DrawRay(raycastPosition2, new Vector3(0, -1, 0) * raycastLength, Color.red);
         if (DetectCollision(raycastPosition1, new Vector3(0, -1, 0), raycastLength, "Obstacle") ||
             DetectCollision(raycastPosition2, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
         {
@@ -196,7 +200,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 hasCollideY = true;
                 transform.position = new Vector3(transform.position.x,
-                    hitReturn.point.y + detectionCollisionOffsetY + boxCollider.size.y / 4, transform.position.z);
+                    hitReturn.point.y + replacementPositionYOffset + boxCollider.size.y / 8, transform.position.z);
             }
         }
         else
@@ -309,6 +313,10 @@ public class PlayerMovement : MonoBehaviour
         if(x != 0)
         {
             playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * roatationWhenMoving);
+        }
+        else
+        {
+            playerSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
         // This is for inertia
