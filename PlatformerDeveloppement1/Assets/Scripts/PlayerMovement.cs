@@ -9,13 +9,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float maxSpeed = 5;
 
-    [SerializeField] private float detectionCollisionOffsetX = -0.1f;
+    [SerializeField] private float replacementPositionXOffset = -0.1f;
+    [SerializeField] private float raycastPositionXOffset = 0.1f;
     [SerializeField] private float inertiaValue = 8;
     private float currentMaxSpeed;
     private float speed;
     private float lastX;
     private BoxCollider2D boxCollider;
     [SerializeField] private bool isCollidingWithObstacle = false;
+    [SerializeField] private bool isCollidingWithBothRayOnObstacle = false;
     private bool hasCollideX = false;
 
     [Header("Dash")]
@@ -52,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private float slidingSpeedY = 0.3f;
     public bool isSliding = false;
+    private float environmentalSpeedY = 0;
     private Vector3 platformDirection;
 
     [Header("Wall Jump")] [SerializeField] private float wallJumpHorizontalForceMax = 5;
@@ -119,10 +122,10 @@ public class PlayerMovement : MonoBehaviour
     private void GravityManagement()
     {
         //Apply gravity if the player is not grounded
-        if (!isGrounded && isGravityOn)
+        if (!isGrounded)
         {
-            if (isCollidingWithObstacle && speedY < 0 &&
-                !collideWithTop) // If the player is sliding on a wall, the speed must be constant and not decrease
+
+            if (isCollidingWithBothRayOnObstacle && (speedY < 0 ||environmentalSpeedY < 0)) // If the player is sliding on a wall, the speed must be constant and not decrease
             {
                 isSliding = true;
             }
@@ -139,8 +142,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        float environmentalSpeedY =
-            !isGrounded && isCollidingWithObstacle && speedY < 0
+        environmentalSpeedY =
+            !isGrounded && isCollidingWithBothRayOnObstacle && speedY < 0
                 ? slidingSpeedY
                 : speedY; // If the player is sliding on a wall, apply a sliding speed multiplier
         transform.Translate(new Vector3(0, environmentalSpeedY, 0));
@@ -236,7 +239,6 @@ public class PlayerMovement : MonoBehaviour
         {
             dashCooldownTimer = dashCooldown;
             isDashing = true;
-            isGravityOn = false;
             timeJumpButtonPressed = maxJumpTime * 2; //Avoid hold jump button condition
             speedY = 0;
             echoEffect.SetStartPos(transform.position);
@@ -257,9 +259,8 @@ public class PlayerMovement : MonoBehaviour
                     transform.position +=
                         new Vector3(
                             Mathf.Sign(lastX) *
-                            (hitReturn.distance - detectionCollisionOffsetX - boxCollider.size.x / 2), 0, 0);
+                            (hitReturn.distance - replacementPositionXOffset - boxCollider.size.x / 2), 0, 0);
                     isDashing = false;
-                    isGravityOn = true;
                     echoEffect.SetEndPos(transform.position);
                     StartCoroutine(echoEffect.SpawnEveryEchoes(timeBtwEchoes, numberOfEchoes));
                 }
@@ -287,20 +288,34 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 raycastDirection = new Vector3(x == 0 ? lastX : x, 0, 0);
         float environmentalSpeedX = isGrounded ? speed : speed * aerialHorizontalSpeedMultiplier;
-        float raycastLength = boxCollider.size.x / 2 + Mathf.Abs(x) * environmentalSpeedX * Time.deltaTime;
-        Vector3 raycastPosition1 = transform.position - new Vector3(0, boxCollider.bounds.extents.y / 2);
-        Vector3 raycastPosition2 = transform.position + new Vector3(0, boxCollider.bounds.extents.y / 2);
+        float raycastLength = boxCollider.size.x/8 + Mathf.Abs(x) * environmentalSpeedX * Time.deltaTime;
+        Vector3 raycastPosition1 = transform.position + new Vector3(Mathf.Sign(raycastDirection.x) * (boxCollider.bounds.extents.x + raycastPositionXOffset), boxCollider.bounds.extents.y / 2);
+        Vector3 raycastPosition2 = transform.position + new Vector3(Mathf.Sign(raycastDirection.x) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -boxCollider.bounds.extents.y / 2);
+
+        Debug.DrawRay(raycastPosition1, raycastDirection * raycastLength, Color.green);
+        Debug.DrawRay(raycastPosition2, raycastDirection * raycastLength, Color.green);
+
+        bool collidedWithRay1 = DetectCollision(raycastPosition1, raycastDirection, raycastLength, "Obstacle");
+        bool collidedWithRay2 = DetectCollision(raycastPosition2, raycastDirection, raycastLength, "Obstacle");
 
         //Check if there is an obstacle in this direction
-        if (DetectCollision(raycastPosition1, raycastDirection, raycastLength, "Obstacle") ||
-            DetectCollision(raycastPosition2, raycastDirection, raycastLength, "Obstacle"))
+        if (collidedWithRay1 || collidedWithRay2)
         {
             if (raycastDirection.x > 0) wallIsOnTheRight = true;
             else if (raycastDirection.x < 0) wallIsOnTheRight = false;
-            PlayerCollideWhileHorizontalMovement(x);
+            PlayerCollideWhileHorizontalMovement(raycastDirection.x);
+            if(collidedWithRay1 && collidedWithRay2)
+            {
+                isCollidingWithBothRayOnObstacle = true;
+            }
+            else
+            {
+                isCollidingWithBothRayOnObstacle = false;
+            }
         }
         else
         {
+            isCollidingWithBothRayOnObstacle = false;
             isCollidingWithObstacle = false;
             hasCollideX = false;
         }
@@ -323,15 +338,15 @@ public class PlayerMovement : MonoBehaviour
         ManageInertia(x);
     }
 
-    private void PlayerCollideWhileHorizontalMovement(float x)
+    private void PlayerCollideWhileHorizontalMovement(float raycastDirectionX)
     {
         isCollidingWithObstacle = true;
         if (hasCollideX == false) // Tp the player to the obstacle if it's his future position (only once)
         {
             hasCollideX = true;
-            transform.position +=
-                new Vector3(Mathf.Sign(x) * (hitReturn.distance - detectionCollisionOffsetX - boxCollider.size.x / 2),
-                    0, 0);
+            transform.position = new Vector3(
+                hitReturn.point.x - replacementPositionXOffset - Mathf.Sign(raycastDirectionX) * boxCollider.size.x / 2,
+                transform.position.y, transform.position.z);
         }
     }
 
