@@ -12,9 +12,11 @@ public class CanvasManager : MonoBehaviour
     private int timerActive = 1;
     private bool isGamePaused = false;
     public GameObject pauseFirstButton;
+    private TimerManager timerManager;
     // Start is called before the first frame update
     void Start()
     {
+        timerManager = GameObject.Find("TimerManager").GetComponent<TimerManager>();
         pauseMenu.SetActive(false);
         SetTimerText();
     }
@@ -22,6 +24,7 @@ public class CanvasManager : MonoBehaviour
     {
         timerActive = PlayerPrefs.GetInt("TimerActive",1);
         setTimerText.text = timerActive == 1 ? "Delete Timer" : "Add Timer";
+        timerManager.ShowOrHideTimer();
     }
 
     public void PlayerPressPauseButton()

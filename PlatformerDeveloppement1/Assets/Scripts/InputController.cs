@@ -8,12 +8,14 @@ public class InputController : MonoBehaviour
     private PlayerMovement playerMovement;
     private CanvasManager canvasManager;
     private bool Fire2KeepPressed, Fire3Pressed, Fire1Pressed, Fire1KeepPressed;
+    private TimerManager timerManager;
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
         canvasManager = GameObject.Find("Canvas").GetComponent<CanvasManager>();
         playerMovement = GetComponent<PlayerMovement>();
+        timerManager = GameObject.Find("TimerManager").GetComponent<TimerManager>();
     }
 
     // Update is called once per frame
@@ -55,6 +57,10 @@ public class InputController : MonoBehaviour
         if (Input.GetButtonDown("Cancel"))
         {
             canvasManager.PlayerPressPauseButton();
+        }
+        if(Input.GetButtonDown("ResetTimer"))
+        {
+            timerManager.ResetTimer();
         }
     }
     void FixedUpdate()
