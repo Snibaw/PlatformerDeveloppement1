@@ -24,11 +24,6 @@ public class InputController : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical");
 
-        Fire1KeepPressed = false;
-        Fire2KeepPressed = false;
-        Fire3Pressed = false;
-        Fire1Pressed = false;
-
         //Sprint When Player press B on controller
         if (Input.GetButton("Fire2"))
         {
@@ -89,5 +84,10 @@ public class InputController : MonoBehaviour
         {
             playerMovement.HoldJumpButton();
         }
+
+        Fire1KeepPressed = false;
+        Fire2KeepPressed = false;
+        Fire3Pressed = false;
+        Fire1Pressed = false;
     }
 }
