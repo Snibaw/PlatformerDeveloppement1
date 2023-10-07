@@ -9,6 +9,7 @@ public class InputController : MonoBehaviour
     private CanvasManager canvasManager;
     private bool Fire2KeepPressed, Fire3Pressed, Fire1Pressed, Fire1KeepPressed;
     private TimerManager timerManager;
+    private ShowButtonsHelp showButtonsHelp;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,7 @@ public class InputController : MonoBehaviour
         canvasManager = GameObject.Find("Canvas").GetComponent<CanvasManager>();
         playerMovement = GetComponent<PlayerMovement>();
         timerManager = GameObject.Find("TimerManager").GetComponent<TimerManager>();
+        showButtonsHelp = GameObject.Find("ShowButtonsHelp").GetComponent<ShowButtonsHelp>();
     }
 
     // Update is called once per frame
@@ -24,7 +26,7 @@ public class InputController : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical");
 
-        //Sprint When Player press B on controller
+        //Sprint When Player press LB on controller
         if (Input.GetButton("Fire2"))
         {
             Fire2KeepPressed = true;
@@ -56,6 +58,14 @@ public class InputController : MonoBehaviour
         if(Input.GetButtonDown("ResetTimer"))
         {
             timerManager.ResetTimer();
+        }
+        if(Input.GetButtonDown("Select"))
+        {
+            showButtonsHelp.ShowHideExplanation();
+        }
+        if(Input.GetButtonDown("Return"))
+        {
+            canvasManager.CloseMenuIfOpen();
         }
     }
     void FixedUpdate()

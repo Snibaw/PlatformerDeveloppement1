@@ -82,4 +82,11 @@ public class CanvasManager : MonoBehaviour
     {
         Application.Quit();
     }
+    public void CloseMenuIfOpen()
+    {
+        if(isGamePaused)
+        {
+            ResumeGame();
+        }
+    }
 }
