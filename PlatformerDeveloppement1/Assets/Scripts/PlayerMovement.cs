@@ -29,19 +29,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool isDashing = false;
     [SerializeField] private float dashDuration = 0.1f;
     [SerializeField] private float currentDashDuration = 0;
+    [SerializeField] private float cameraShakeDurationWhenDash = 0.2f;
     private float dashCooldownTimer = 0;
     [Header("Sprint")] [SerializeField] private float sprintSpeed = 8;
 
     [Header("Jump")] [SerializeField] private float replacementPositionYOffset = 0.1f;
     [SerializeField] private float raycastPositionYOffset = 0.1f;
     [SerializeField] private bool isGrounded;
+    private bool wasGrounded;
     [SerializeField] private float maxJumpPower = 2;
     [SerializeField] private float decayJumpPower = 0.1f;
     private float jumpPower = 0;
     [SerializeField] private float maxJumpTime = 1;
     [SerializeField] private float gravity = 9.81f;
     [SerializeField] private float gravityMultiplier = 1;
-    [SerializeField] private bool isGravityOn = true;
+    private bool isGravityOn = true;
     private float speedY;
     private bool canDoubleJump = true;
     private bool isJumping;
@@ -78,11 +80,13 @@ public class PlayerMovement : MonoBehaviour
     private TrailRenderer trailRenderer;
     [SerializeField] private GameObject playerSprite;
     [SerializeField] private float roatationWhenMoving = 10f;
+    [SerializeField] private Animator playerAnim;
 
     [Header("EchoEffect")]
     [SerializeField] private float timeBtwEchoes = 0.1f;
     [SerializeField] private int numberOfEchoes = 5;
     private EchoEffect echoEffect;
+    
 
 
     private void Start()
@@ -161,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void GroundManagement()
     {
+        wasGrounded = isGrounded;
         float raycastLength = boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 =
             transform.position - new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
@@ -211,6 +216,10 @@ public class PlayerMovement : MonoBehaviour
             hasCollideY = false;
             isGrounded = false;
         }
+        if(!wasGrounded && isGrounded)
+        {
+            playerAnim.SetTrigger("Land");
+        }
     }
 
     private void FloorManagement()
@@ -240,6 +249,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (dashCooldownTimer <= 0)
         {
+            StartCoroutine(Camera.main.GetComponent<Shake>().Shaking(cameraShakeDurationWhenDash));
             dashCooldownTimer = dashCooldown;
             isDashing = true;
             timeJumpButtonPressed = maxJumpTime * 2; //Avoid hold jump button condition
@@ -263,6 +273,7 @@ public class PlayerMovement : MonoBehaviour
                         new Vector3(
                             Mathf.Sign(lastX) *
                             (hitReturn.distance - replacementPositionXOffset - boxCollider.size.x / 2), 0, 0);
+
                     isDashing = false;
                     echoEffect.SetEndPos(transform.position);
                     StartCoroutine(echoEffect.SpawnEveryEchoes(timeBtwEchoes, numberOfEchoes));
@@ -386,11 +397,19 @@ public class PlayerMovement : MonoBehaviour
     public void Sprint()
     {
         currentMaxSpeed = sprintSpeed;
+        if(trailRenderer.startColor != Color.red)
+        {
+            trailRenderer.startColor = Color.yellow;
+        }
     }
 
     public void StopSprint() // decays the sprint speed
     {
         currentMaxSpeed = Mathf.Max(maxSpeed, currentMaxSpeed -= Time.deltaTime * inertiaValue);
+        if(trailRenderer.startColor != Color.red)
+        {
+            trailRenderer.startColor = Color.white;
+        }
     }
 
     public void PressJumpButton()
@@ -421,6 +440,7 @@ public class PlayerMovement : MonoBehaviour
         coyotteTimeTimer = -1;
         timeJumpButtonPressed = Time.deltaTime;
         jumpPower = maxJumpPower;
+        playerAnim.SetTrigger("Jump");
         Jump();
     }
 
