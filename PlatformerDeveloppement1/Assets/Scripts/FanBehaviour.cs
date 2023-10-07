@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class FanBehaviour : MonoBehaviour
 {
+    [SerializeField] private float fanForce = 0.5f;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Triggered" + collision.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<PlayerMovement>().AlterGravity(-1f);
+            collision.gameObject.GetComponent<PlayerMovement>().AlterGravity(-fanForce);
         }
     }
 

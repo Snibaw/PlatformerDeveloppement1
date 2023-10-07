@@ -6,17 +6,14 @@ public class NextLevelDetectorBehaviour : MonoBehaviour
 {
     private MainCameraMovement mainCam;
     [SerializeField] private Vector3 nextLevelCameraPosition;
-    [SerializeField] private GameObject otherTP;
     void Start()
     {
         mainCam = Camera.main.GetComponent<MainCameraMovement>();
-        otherTP.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.CompareTag("Player"))
         {
-            otherTP.SetActive(true);
             StartCoroutine(mainCam.MoveCamera(nextLevelCameraPosition));
         }
     }
