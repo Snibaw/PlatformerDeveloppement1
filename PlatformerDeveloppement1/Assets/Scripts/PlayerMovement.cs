@@ -86,18 +86,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float timeBtwEchoes = 0.1f;
     [SerializeField] private int numberOfEchoes = 5;
     private EchoEffect echoEffect;
+    private SoundEffectManager soundEffectManager;
     
 
 
     private void Start()
     {
         speed = 0;
-        boxCollider = GetComponent<BoxCollider2D>();
-        trailRenderer = GetComponent<TrailRenderer>();
-        echoEffect = GetComponent<EchoEffect>();
         dashCooldownTimer = 0;
         timeJumpButtonPressed = 0;
         isGrounded = false;
+
+        boxCollider = GetComponent<BoxCollider2D>();
+        trailRenderer = GetComponent<TrailRenderer>();
+        echoEffect = GetComponent<EchoEffect>();
+        soundEffectManager = GameObject.Find("SoundEffectManager").GetComponent<SoundEffectManager>();
+
+        
     }
 
     private void FixedUpdate()
@@ -221,6 +226,7 @@ public class PlayerMovement : MonoBehaviour
         if(!wasGrounded && isGrounded)
         {
             playerAnim.SetTrigger("Land");
+            soundEffectManager.PlaySoundEffect("Land");
         }
     }
 
@@ -251,6 +257,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (dashCooldownTimer <= 0)
         {
+            soundEffectManager.PlaySoundEffect("Dash");
             StartCoroutine(Camera.main.GetComponent<Shake>().Shaking(cameraShakeDurationWhenDash));
             dashCooldownTimer = dashCooldown;
             isDashing = true;
@@ -442,7 +449,10 @@ public class PlayerMovement : MonoBehaviour
         coyotteTimeTimer = -1;
         timeJumpButtonPressed = Time.deltaTime;
         jumpPower = maxJumpPower;
+
         playerAnim.SetTrigger("Jump");
+        soundEffectManager.PlaySoundEffect("Jump");
+
         Jump();
     }
 
