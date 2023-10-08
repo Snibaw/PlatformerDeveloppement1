@@ -67,6 +67,10 @@ public class InputController : MonoBehaviour
         {
             canvasManager.CloseMenuIfOpen();
         }
+        if(Input.GetButtonDown("SpawnAnimation"))
+        {
+            canvasManager.ShowHideSpawnAnimation();
+        }
     }
     void FixedUpdate()
     {

@@ -13,11 +13,16 @@ public class CanvasManager : MonoBehaviour
     private bool isGamePaused = false;
     public GameObject pauseFirstButton;
     private TimerManager timerManager;
+    [SerializeField] private GameObject spawnAnimation;
+    [SerializeField] private TMP_Text spawnAnimationText;
+    private bool isSpawnAnimationActive = false;
     // Start is called before the first frame update
     void Start()
     {
         timerManager = GameObject.Find("TimerManager").GetComponent<TimerManager>();
         pauseMenu.SetActive(false);
+        isSpawnAnimationActive = PlayerPrefs.GetInt("SpawnAnimationActive",1) == 1;
+        spawnAnimation.SetActive(isSpawnAnimationActive);
         SetTimerText();
     }
     private void SetTimerText()
@@ -88,5 +93,11 @@ public class CanvasManager : MonoBehaviour
         {
             ResumeGame();
         }
+    }
+    public void ShowHideSpawnAnimation()
+    {
+        isSpawnAnimationActive = !isSpawnAnimationActive;
+        PlayerPrefs.SetInt("SpawnAnimationActive", isSpawnAnimationActive ? 1 : 0);
+        spawnAnimationText.text = isSpawnAnimationActive ? "Hide Spawn Animation" : "Show Spawn Animation";
     }
 }

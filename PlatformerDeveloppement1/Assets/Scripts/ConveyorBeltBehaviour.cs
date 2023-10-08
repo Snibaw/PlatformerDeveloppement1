@@ -11,7 +11,6 @@ public class ConveyorBeltBehaviour : MonoBehaviour
     private void Start()
     {
         GetComponent<Animator>().SetBool("isGoingRight", direction.x > 0);
-        Debug.Log(direction);
     }
 
     public Vector3 GetDirection()
