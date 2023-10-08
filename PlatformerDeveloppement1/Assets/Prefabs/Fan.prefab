@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 6724003529207361907}
   - component: {fileID: 4805140923406389334}
   - component: {fileID: 6194332353821341840}
+  - component: {fileID: 3039687610314038218}
   m_Layer: 0
   m_Name: Wind Area
   m_TagString: Untagged
@@ -5058,3 +5059,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.603528, y: 7.985018}
   m_EdgeRadius: 0
+--- !u!114 &3039687610314038218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7822214111292489630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f92dc5833ec7d840b20ca499b81bfaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fanForce: 8
+  fanDirection: {x: 0, y: 1, z: 0}
