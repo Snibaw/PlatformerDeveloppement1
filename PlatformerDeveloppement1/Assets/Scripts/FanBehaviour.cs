@@ -6,7 +6,6 @@ public class FanBehaviour : MonoBehaviour
     [SerializeField] private float fanForce = 0.5f;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Triggered" + collision.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -16,7 +15,6 @@ public class FanBehaviour : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("Triggered" + other.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (other.gameObject.CompareTag("Player"))
         {
