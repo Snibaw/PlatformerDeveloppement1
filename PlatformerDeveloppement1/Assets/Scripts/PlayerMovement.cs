@@ -207,8 +207,10 @@ public class PlayerMovement : MonoBehaviour
             if (hasCollideY == false) // Tp the player to the ground if it's his future position (only once)
             {
                 hasCollideY = true;
-                transform.position = new Vector3(transform.position.x,
-                    hitReturn.point.y + replacementPositionYOffset + boxCollider.size.y / 8, transform.position.z);
+                if(hitReturn.transform.gameObject.GetComponent<BoxCollider2D>() != null)
+                    transform.position = new Vector3(transform.position.x, hitReturn.transform.gameObject.GetComponent<BoxCollider2D>().bounds.max.y + boxCollider.size.y / 2, transform.position.z);
+                else
+                    transform.position = new Vector3(transform.position.x, hitReturn.point.y + replacementPositionYOffset + boxCollider.size.y / 8, transform.position.z);
             }
         }
         else
