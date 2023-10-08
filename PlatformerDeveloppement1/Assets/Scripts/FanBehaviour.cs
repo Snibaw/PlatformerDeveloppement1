@@ -4,17 +4,31 @@ using UnityEngine;
 public class FanBehaviour : MonoBehaviour
 {
     [SerializeField] private float fanForce = 0.5f;
-    private void OnTriggerEnter2D(Collider2D collision)
+    [SerializeField] private Vector3 fanDirection = Vector3.up;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("TriggeredEnter" + other.gameObject.name);
+        // Check if the object colliding with the platform is the player.
+        if (other.gameObject.CompareTag("Player"))
+        {
+            other.gameObject.GetComponent<PlayerMovement>().AlterGravity(0);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        //Debug.Log("TriggeredStay" + collision.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<PlayerMovement>().AlterGravity(-fanForce);
+            collision.gameObject.GetComponent<PlayerMovement>().transform.position += transform.up * fanForce * Time.deltaTime;
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        Debug.Log("TriggeredExit" + other.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (other.gameObject.CompareTag("Player"))
         {
