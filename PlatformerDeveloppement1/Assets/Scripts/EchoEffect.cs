@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class EchoEffect : MonoBehaviour
 {
@@ -8,6 +10,14 @@ public class EchoEffect : MonoBehaviour
     [SerializeField] private Transform transformCopyModel;
     [SerializeField] private Color echoColor;
     private Vector3 startPos, endPos;
+    private ChromaticAberration chromaticAberration;
+    private LensDistortion lensDistortion;
+
+    private void Start() {
+        Volume volume = GameObject.Find("Global Volume").GetComponent<Volume>();
+        volume.profile.TryGet(out chromaticAberration);
+        volume.profile.TryGet(out lensDistortion);
+    }
 
     public void SpawnEcho(Vector3 positionToSpawn, Color echoColorTemp)
     {
@@ -34,5 +44,7 @@ public class EchoEffect : MonoBehaviour
             echoColorTemp = new Color(echoColorTemp.r + 0.1f, echoColorTemp.g + 0.1f, echoColorTemp.b + 0.1f, echoColorTemp.a);
             yield return new WaitForSeconds(timeBtwSpawn);
         }
+        chromaticAberration.intensity.value = 0f;
+        lensDistortion.intensity.value = 0f;
     }
 }

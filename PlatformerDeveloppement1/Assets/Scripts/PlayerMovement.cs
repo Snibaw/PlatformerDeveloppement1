@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -87,6 +91,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private int numberOfEchoes = 5;
     private EchoEffect echoEffect;
     private SoundEffectManager soundEffectManager;
+    private ChromaticAberration chromaticAberration;
+    private LensDistortion lensDistortion;
+    [SerializeField] private Color noDashColor;
+    private Color dashColor;
+    private SpriteRenderer playerSpriteComponent;
+
     
 
 
@@ -101,8 +111,12 @@ public class PlayerMovement : MonoBehaviour
         trailRenderer = GetComponent<TrailRenderer>();
         echoEffect = GetComponent<EchoEffect>();
         soundEffectManager = GameObject.Find("SoundEffectManager").GetComponent<SoundEffectManager>();
+        Volume volume = GameObject.Find("Global Volume").GetComponent<Volume>();
+        volume.profile.TryGet(out chromaticAberration);
+        volume.profile.TryGet(out lensDistortion);
 
-        
+        playerSpriteComponent = playerSprite.GetComponent<SpriteRenderer>();
+        dashColor = playerSpriteComponent.color;
     }
 
     private void FixedUpdate()
@@ -111,6 +125,10 @@ public class PlayerMovement : MonoBehaviour
         timeSinceLastWallJump += Time.deltaTime;
         coyotteTimeTimer -= Time.deltaTime;
         bufferJumpTimer -= Time.deltaTime;
+        if(dashCooldownTimer <= 0)
+            playerSpriteComponent.color = dashColor;
+        else
+            playerSpriteComponent.color = Color.Lerp(dashColor, noDashColor, Mathf.PingPong(3*Time.time, 1));
 
         DecayTrailRendererColor();
 
@@ -127,7 +145,6 @@ public class PlayerMovement : MonoBehaviour
         trailRenderer.startColor = Color.Lerp(trailRenderer.startColor, Color.white,
             Time.deltaTime * timeBtwRedAndWhiteTrailRenderer);
     }
-
     private void GravityManagement()
     {
         //Apply gravity if the player is not grounded
@@ -257,13 +274,17 @@ public class PlayerMovement : MonoBehaviour
     {
         if (dashCooldownTimer <= 0)
         {
-            soundEffectManager.PlaySoundEffect("Dash");
-            StartCoroutine(Camera.main.GetComponent<Shake>().Shaking(cameraShakeDurationWhenDash));
             dashCooldownTimer = dashCooldown;
             isDashing = true;
             timeJumpButtonPressed = maxJumpTime * 2; //Avoid hold jump button condition
             speedY = 0;
+
+            StartCoroutine(Camera.main.GetComponent<Shake>().Shaking(cameraShakeDurationWhenDash));
             echoEffect.SetStartPos(transform.position);
+            soundEffectManager.PlaySoundEffect("Dash");
+            chromaticAberration.intensity.value = 0.5f;
+            lensDistortion.intensity.value = -0.3f;
+            playerSpriteComponent.color = noDashColor;
         }
     }
 
