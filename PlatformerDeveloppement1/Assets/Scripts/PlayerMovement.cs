@@ -134,7 +134,9 @@ public class PlayerMovement : MonoBehaviour
         DecayTrailRendererColor();
 
         GroundManagement();
-        FloorManagement();
+        if(speedY >=0)
+            FloorManagement();
+
         WallManagement();
 
         GravityManagement();
@@ -297,12 +299,12 @@ public class PlayerMovement : MonoBehaviour
             if (currentDashDuration < dashDuration)
             {
                 bool hasCollided = false;
-                List<Vector3> raycastPositions = new List<Vector3>();
+                Vector3 raycastPosition;
                 for(int i=0; i<7; i++)
                 {
-                    raycastPositions.Add(transform.position + new Vector3(Mathf.Sign(lastX) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -3*boxCollider.size.y / 8 + i*boxCollider.size.y/8));
-                    Debug.DrawRay(raycastPositions[i], new Vector3(lastX, 0, 0) * dashDistance, Color.yellow);
-                    if(DetectCollision(raycastPositions[i], new Vector3(lastX, 0, 0), dashDistance, "Obstacle"))
+                    raycastPosition = transform.position + new Vector3(Mathf.Sign(lastX) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -3*boxCollider.size.y / 8 + i*boxCollider.size.y/8);
+                    Debug.DrawRay(raycastPosition, new Vector3(lastX, 0, 0) * dashDistance, Color.yellow);
+                    if(DetectCollision(raycastPosition, new Vector3(lastX, 0, 0), dashDistance, "Obstacle"))
                     {
                         hasCollided = true;
                     }
@@ -430,7 +432,8 @@ public class PlayerMovement : MonoBehaviour
 
     private bool DetectCollision(Vector3 startPosition, Vector3 raycastDirection, float raycastLength, string targetTag)
     {
-        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength);
+        //Only detect Default layer
+        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength, LayerMask.GetMask("Default"));
 
         if (hit.collider != null)
         {

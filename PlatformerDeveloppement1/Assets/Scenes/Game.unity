@@ -11585,7 +11585,7 @@ GameObject:
   - component: {fileID: 1392946842}
   - component: {fileID: 1392946846}
   - component: {fileID: 1392946847}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -11635,7 +11635,7 @@ MonoBehaviour:
   bufferJump: 0.2
   timeBtwRedAndWhiteTrailRenderer: 3
   playerSprite: {fileID: 1845915049}
-  roatationWhenMoving: 8
+  rotationWhenMoving: 10
   playerAnim: {fileID: 1431919348}
   timeBtwEchoes: 0.005
   numberOfEchoes: 4
@@ -12547,6 +12547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fanForce: 0.1
+  fanDirection: {x: 0, y: 1, z: 0}
 --- !u!1 &1526868494 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 215215335291242532, guid: 9373f264d0a547d47a676771e23e6c5c, type: 3}
