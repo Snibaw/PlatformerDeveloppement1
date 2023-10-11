@@ -8,7 +8,6 @@ public class FanBehaviour : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("TriggeredEnter" + other.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (other.gameObject.CompareTag("Player"))
         {
@@ -18,7 +17,6 @@ public class FanBehaviour : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        //Debug.Log("TriggeredStay" + collision.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -28,7 +26,6 @@ public class FanBehaviour : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("TriggeredExit" + other.gameObject.name);
         // Check if the object colliding with the platform is the player.
         if (other.gameObject.CompareTag("Player"))
         {

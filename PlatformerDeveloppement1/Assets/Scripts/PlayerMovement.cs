@@ -192,12 +192,12 @@ public class PlayerMovement : MonoBehaviour
     private void GroundManagement()
     {
         wasGrounded = isGrounded;
-        float raycastLength = boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
+        float raycastLength = 2*boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
         bool hasCollided = false;
         Vector3 raycastPosition;
         for(int i=0; i<7; i++)
         {
-            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, -boxCollider.bounds.extents.y - raycastPositionYOffset);
+            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, -boxCollider.bounds.extents.y - raycastPositionYOffset+ boxCollider.size.y/8);
             Debug.DrawRay(raycastPosition, new Vector3(0, -1, 0) * raycastLength, Color.red);
             if(DetectCollision(raycastPosition, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
             {
