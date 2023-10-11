@@ -193,15 +193,19 @@ public class PlayerMovement : MonoBehaviour
     {
         wasGrounded = isGrounded;
         float raycastLength = boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
-        Vector3 raycastPosition1 =
-            transform.position - new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
-        Vector3 raycastPosition2 =
-            transform.position - new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
+        bool hasCollided = false;
+        Vector3 raycastPosition;
+        for(int i=0; i<7; i++)
+        {
+            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, -boxCollider.bounds.extents.y - raycastPositionYOffset);
+            Debug.DrawRay(raycastPosition, new Vector3(0, -1, 0) * raycastLength, Color.red);
+            if(DetectCollision(raycastPosition, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
+            {
+                hasCollided = true;
+            }
+        }
 
-        Debug.DrawRay(raycastPosition1, new Vector3(0, -1, 0) * raycastLength, Color.red);
-        Debug.DrawRay(raycastPosition2, new Vector3(0, -1, 0) * raycastLength, Color.red);
-        if (DetectCollision(raycastPosition1, new Vector3(0, -1, 0), raycastLength, "Obstacle") ||
-            DetectCollision(raycastPosition2, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
+        if (hasCollided)
         {
             //For moving platform
             if (hitReturn.collider.gameObject.name == "MovingPlatform")
@@ -253,18 +257,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void FloorManagement()
     {
-        float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 =
             transform.position + new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
         Vector3 raycastPosition2 =
             transform.position + new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
         
-        Debug.DrawRay(raycastPosition1, new Vector3(0, 1, 0) * raycastLength, Color.blue);
-        Debug.DrawRay(raycastPosition2, new Vector3(0, 1, 0) * raycastLength, Color.blue);
-        if (DetectCollision(raycastPosition1, new Vector3(0, 1, 0), raycastLength, "Obstacle") ||
-            DetectCollision(raycastPosition2, new Vector3(0, 1, 0), raycastLength, "Obstacle"))
+        float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
+        Vector3 raycastPosition;
+        bool hasCollided = false;
+        for(int i=0; i<7; i++)
+        {
+            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, boxCollider.bounds.extents.y);
+            Debug.DrawRay(raycastPosition, new Vector3(lastX, 0, 0) * raycastLength, Color.blue);
+            if(DetectCollision(raycastPosition, new Vector3(lastX, 0, 0), raycastLength, "Obstacle"))
+            {
+                hasCollided = true;
+            }
+        }
+        if (hasCollided)
         {
             timeJumpButtonPressed = 2 * maxJumpTime; // Stop the jump if the player is colliding with the ceiling
+            if(collideWithTop == false)
+            {
+                transform.position = new Vector3(transform.position.x, hitReturn.point.y - boxCollider.size.y / 2, transform.position.z);
+            }
             collideWithTop = true;
             speedY = -speedY / 2;
         }
@@ -437,6 +453,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (hit.collider != null)
         {
+
             if (hit.collider.gameObject.tag == targetTag)
             {
                 hitReturn = hit;
