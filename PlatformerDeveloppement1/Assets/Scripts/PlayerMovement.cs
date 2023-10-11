@@ -97,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Color noDashColor;
     private Color dashColor;
     private SpriteRenderer playerSpriteComponent;
+    public bool isDead = false;
 
     
 
@@ -122,6 +123,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if(isDead) return;
+
         dashCooldownTimer -= Time.deltaTime;
         timeSinceLastWallJump += Time.deltaTime;
         coyotteTimeTimer -= Time.deltaTime;
@@ -538,5 +542,12 @@ public class PlayerMovement : MonoBehaviour
                 ? -wallJumpHorizontalForce
                 : wallJumpHorizontalForce; // The force depends on the direction of the player before jumping
         transform.Translate(new Vector3(horizontalMovement, 0, 0) * Time.deltaTime);
+    }
+    public void Die()
+    {
+        isDead = true;
+        playerAnim.SetTrigger("Die");
+        chromaticAberration.intensity.value = 0;
+        lensDistortion.intensity.value = 0;
     }
 }
