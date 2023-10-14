@@ -312,7 +312,7 @@ public class SimplePlayerMovement : MonoBehaviour
 
     private bool DetectCollision(Vector3 startPosition, Vector3 raycastDirection, float raycastLength, string targetTag)
     {
-        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength);
+        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength, LayerMask.GetMask("Default"));
 
         if (hit.collider != null)
         {

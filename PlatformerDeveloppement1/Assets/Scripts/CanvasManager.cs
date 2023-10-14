@@ -9,13 +9,15 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject[] pauseMenuButtons;
     [SerializeField] private TMP_Text setTimerText;
+    [SerializeField] private GameObject continueButton;
+    [SerializeField] private GameObject retryButton;
     private int timerActive = 1;
     private bool isGamePaused = false;
-    public GameObject pauseFirstButton;
     private TimerManager timerManager;
     [SerializeField] private GameObject spawnAnimation;
     [SerializeField] private TMP_Text spawnAnimationText;
     private bool isSpawnAnimationActive = false;
+    private bool isGameFinished = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,8 @@ public class CanvasManager : MonoBehaviour
 
     public void PlayerPressPauseButton()
     {
+        if(isGameFinished) return;
+
         if (isGamePaused)
         {
             ResumeGame();
@@ -43,8 +47,12 @@ public class CanvasManager : MonoBehaviour
             OpenPauseMenu();
         }
     }
-    private void OpenPauseMenu()
+    public void OpenPauseMenu(bool _isGameFinished = false)
     {
+        isGameFinished = _isGameFinished;
+        continueButton.SetActive(!isGameFinished);
+        retryButton.SetActive(isGameFinished);
+
         Time.timeScale = 0;
         isGamePaused = true;
         pauseMenu.SetActive(true);
@@ -58,7 +66,7 @@ public class CanvasManager : MonoBehaviour
         //clear selected object
         EventSystem.current.SetSelectedGameObject(null);
         //set a new selected object
-        EventSystem.current.SetSelectedGameObject(pauseFirstButton);
+        EventSystem.current.SetSelectedGameObject(isGameFinished ? retryButton : continueButton);
 
     }
     public void ResumeGame()
@@ -89,10 +97,15 @@ public class CanvasManager : MonoBehaviour
     }
     public void CloseMenuIfOpen()
     {
-        if(isGamePaused)
+        if(isGamePaused && !isGameFinished)
         {
             ResumeGame();
         }
+    }
+    public void RetryButton()
+    {
+        Time.timeScale = 1;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     public void ShowHideSpawnAnimation()
     {

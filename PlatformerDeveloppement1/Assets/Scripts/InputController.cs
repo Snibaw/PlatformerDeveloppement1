@@ -23,6 +23,8 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(playerMovement.isDead) return;
+
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical");
 
@@ -74,6 +76,8 @@ public class InputController : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if(playerMovement.isDead) return;
+
         playerMovement.Move(x);
 
         if(Fire2KeepPressed)

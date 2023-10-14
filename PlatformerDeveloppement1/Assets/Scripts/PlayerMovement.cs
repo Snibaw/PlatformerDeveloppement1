@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private float currentMaxSpeed;
     private float speed;
     private float lastX;
+    private float x;
     private BoxCollider2D boxCollider;
     [SerializeField] private bool isCollidingWithObstacle = false;
     [SerializeField] private bool isCollidingWithBothRayOnObstacle = false;
@@ -57,9 +58,9 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Environmental Speed")] [SerializeField]
     private float aerialHorizontalSpeedMultiplier = 0.7f;
-
     [SerializeField] private float slidingSpeedY = 0.3f;
     public bool isSliding = false;
+    private float environmentalSpeedX = 0;
     private float environmentalSpeedY = 0;
     private Vector3 platformDirection;
 
@@ -82,9 +83,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Other")]
     [SerializeField] private float timeBtwRedAndWhiteTrailRenderer = 5f;
     private TrailRenderer trailRenderer;
-    private ParticleSystem movementParticleSystem;
     [SerializeField] private GameObject playerSprite;
-    [SerializeField] private float roatationWhenMoving = 10f;
+    [SerializeField] private float rotationWhenMoving = 10f;
     [SerializeField] private Animator playerAnim;
 
     [Header("EchoEffect")]
@@ -97,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Color noDashColor;
     private Color dashColor;
     private SpriteRenderer playerSpriteComponent;
+    public bool isDead = false;
 
     
 
@@ -110,7 +111,6 @@ public class PlayerMovement : MonoBehaviour
 
         boxCollider = GetComponent<BoxCollider2D>();
         trailRenderer = GetComponent<TrailRenderer>();
-        movementParticleSystem = GetComponentInChildren<ParticleSystem>();
         echoEffect = GetComponent<EchoEffect>();
         soundEffectManager = GameObject.Find("SoundEffectManager").GetComponent<SoundEffectManager>();
         Volume volume = GameObject.Find("Global Volume").GetComponent<Volume>();
@@ -123,6 +123,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if(isDead) return;
+
         dashCooldownTimer -= Time.deltaTime;
         timeSinceLastWallJump += Time.deltaTime;
         coyotteTimeTimer -= Time.deltaTime;
@@ -135,7 +138,10 @@ public class PlayerMovement : MonoBehaviour
         DecayTrailRendererColor();
 
         GroundManagement();
-        FloorManagement();
+        if(speedY >=0)
+            FloorManagement();
+
+        WallManagement();
 
         GravityManagement();
 
@@ -190,16 +196,20 @@ public class PlayerMovement : MonoBehaviour
     private void GroundManagement()
     {
         wasGrounded = isGrounded;
-        float raycastLength = boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
-        Vector3 raycastPosition1 =
-            transform.position - new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
-        Vector3 raycastPosition2 =
-            transform.position - new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y + raycastPositionYOffset);
+        float raycastLength = 2*boxCollider.size.y / 8 + Mathf.Abs(speedY) * Time.deltaTime;
+        bool hasCollided = false;
+        Vector3 raycastPosition;
+        for(int i=0; i<7; i++)
+        {
+            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, -boxCollider.bounds.extents.y - raycastPositionYOffset+ boxCollider.size.y/8);
+            Debug.DrawRay(raycastPosition, new Vector3(0, -1, 0) * raycastLength, Color.red);
+            if(DetectCollision(raycastPosition, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
+            {
+                hasCollided = true;
+            }
+        }
 
-        Debug.DrawRay(raycastPosition1, new Vector3(0, -1, 0) * raycastLength, Color.red);
-        Debug.DrawRay(raycastPosition2, new Vector3(0, -1, 0) * raycastLength, Color.red);
-        if (DetectCollision(raycastPosition1, new Vector3(0, -1, 0), raycastLength, "Obstacle") ||
-            DetectCollision(raycastPosition2, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
+        if (hasCollided)
         {
             //For moving platform
             if (hitReturn.collider.gameObject.name == "MovingPlatform")
@@ -251,18 +261,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void FloorManagement()
     {
-        float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
         Vector3 raycastPosition1 =
             transform.position + new Vector3(2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
         Vector3 raycastPosition2 =
             transform.position + new Vector3(-2*boxCollider.bounds.extents.x/3, boxCollider.bounds.extents.y);
         
-        Debug.DrawRay(raycastPosition1, new Vector3(0, 1, 0) * raycastLength, Color.blue);
-        Debug.DrawRay(raycastPosition2, new Vector3(0, 1, 0) * raycastLength, Color.blue);
-        if (DetectCollision(raycastPosition1, new Vector3(0, 1, 0), raycastLength, "Obstacle") ||
-            DetectCollision(raycastPosition2, new Vector3(0, 1, 0), raycastLength, "Obstacle"))
+        float raycastLength = Mathf.Abs(speedY) * Time.deltaTime;
+        Vector3 raycastPosition;
+        bool hasCollided = false;
+        for(int i=0; i<7; i++)
+        {
+            raycastPosition = transform.position + new Vector3(-3*boxCollider.size.x/8 + i*boxCollider.size.x/8, boxCollider.bounds.extents.y);
+            Debug.DrawRay(raycastPosition, new Vector3(lastX, 0, 0) * raycastLength, Color.blue);
+            if(DetectCollision(raycastPosition, new Vector3(lastX, 0, 0), raycastLength, "Obstacle"))
+            {
+                hasCollided = true;
+            }
+        }
+        if (hasCollided)
         {
             timeJumpButtonPressed = 2 * maxJumpTime; // Stop the jump if the player is colliding with the ceiling
+            if(collideWithTop == false)
+            {
+                transform.position = new Vector3(transform.position.x, hitReturn.point.y - boxCollider.size.y / 2, transform.position.z);
+            }
             collideWithTop = true;
             speedY = -speedY / 2;
         }
@@ -296,24 +318,29 @@ public class PlayerMovement : MonoBehaviour
         {
             if (currentDashDuration < dashDuration)
             {
-                
-                //Check if there is an obstacle in this direction
-                if (DetectCollision(transform.position, new Vector3(lastX, 0, 0), dashDistance + boxCollider.size.x / 2,
-                        "Obstacle"))
+                bool hasCollided = false;
+                Vector3 raycastPosition;
+                for(int i=0; i<7; i++)
                 {
-                    transform.position +=
-                        new Vector3(
-                            Mathf.Sign(lastX) *
-                            (hitReturn.distance - replacementPositionXOffset - boxCollider.size.x / 2), 0, 0);
+                    raycastPosition = transform.position + new Vector3(Mathf.Sign(lastX) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -3*boxCollider.size.y / 8 + i*boxCollider.size.y/8);
+                    Debug.DrawRay(raycastPosition, new Vector3(lastX, 0, 0) * dashDistance, Color.yellow);
+                    if(DetectCollision(raycastPosition, new Vector3(lastX, 0, 0), dashDistance, "Obstacle"))
+                    {
+                        hasCollided = true;
+                    }
+                }
 
+                //Check if there is an obstacle in this direction
+                if (hasCollided)
+                {
+                    transform.position += new Vector3(Mathf.Sign(lastX) * (hitReturn.distance - replacementPositionXOffset - boxCollider.size.x / 2), 0, 0);
                     isDashing = false;
                     echoEffect.SetEndPos(transform.position);
                     StartCoroutine(echoEffect.SpawnEveryEchoes(timeBtwEchoes, numberOfEchoes));
                 }
                 else
                 {
-                    transform.position += new Vector3(dashDistance / dashDuration * Time.deltaTime * Mathf.Sign(lastX),
-                        0, 0);
+                    transform.position += new Vector3(dashDistance / dashDuration * Time.deltaTime * Mathf.Sign(lastX),0, 0);
                     currentDashDuration += Time.deltaTime;
                 }
             }
@@ -327,33 +354,49 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
-    public void Move(float x)
+    private void WallManagement()
     {
-        if (timeSinceLastWallJump < timeBetweenWallJumpAndMovement) return;
-
         Vector3 raycastDirection = new Vector3(x == 0 ? lastX : x, 0, 0);
-        float environmentalSpeedX = isGrounded ? speed : speed * aerialHorizontalSpeedMultiplier;
+        environmentalSpeedX = isGrounded ? speed : speed * aerialHorizontalSpeedMultiplier;
         float raycastLength = boxCollider.size.x/8 + Mathf.Abs(x) * environmentalSpeedX * Time.deltaTime;
-        Vector3 raycastPosition1 = transform.position + new Vector3(Mathf.Sign(raycastDirection.x) * (boxCollider.bounds.extents.x + raycastPositionXOffset), boxCollider.bounds.extents.y / 2);
-        Vector3 raycastPosition2 = transform.position + new Vector3(Mathf.Sign(raycastDirection.x) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -boxCollider.bounds.extents.y / 2);
+        
+        List<Vector3> raycastPositions = new List<Vector3>();
 
-        Debug.DrawRay(raycastPosition1, raycastDirection * raycastLength, Color.green);
-        Debug.DrawRay(raycastPosition2, raycastDirection * raycastLength, Color.green);
-
-        bool collidedWithRay1 = DetectCollision(raycastPosition1, raycastDirection, raycastLength, "Obstacle");
-        bool collidedWithRay2 = DetectCollision(raycastPosition2, raycastDirection, raycastLength, "Obstacle");
-
+        bool collidedWithRay2 = true;
+        bool collidedWithRay1 = false;
+        for(int i =0; i<7; i++)
+        {
+            raycastPositions.Add(transform.position + new Vector3(Mathf.Sign(raycastDirection.x) * (boxCollider.bounds.extents.x + raycastPositionXOffset), -3*boxCollider.size.y / 8 + i*boxCollider.size.y/8));
+            Debug.DrawRay(raycastPositions[i], raycastDirection * raycastLength, Color.green);
+            if(DetectCollision(raycastPositions[i], raycastDirection, raycastLength, "Obstacle"))
+            {
+                collidedWithRay1 = true;
+            }
+            else
+            {
+                collidedWithRay2 = false;
+            }
+        }
         //Check if there is an obstacle in this direction
-        if (collidedWithRay1 || collidedWithRay2)
+        if (collidedWithRay1)
         {
             if (raycastDirection.x > 0) wallIsOnTheRight = true;
             else if (raycastDirection.x < 0) wallIsOnTheRight = false;
-            PlayerCollideWhileHorizontalMovement(raycastDirection.x);
-            if(collidedWithRay1 && collidedWithRay2)
+                    isCollidingWithObstacle = true;
+
+            if (hasCollideX == false) // Tp the player to the obstacle if it's his future position (only once)
+            {
+                hasCollideX = true;
+                transform.position = new Vector3(
+                    hitReturn.point.x - replacementPositionXOffset - Mathf.Sign(raycastDirection.x) * boxCollider.size.x / 2,
+                    transform.position.y, transform.position.z);
+            }
+
+            if(collidedWithRay2)
             {
                 isCollidingWithBothRayOnObstacle = true;
             }
+
             else
             {
                 isCollidingWithBothRayOnObstacle = false;
@@ -366,30 +409,22 @@ public class PlayerMovement : MonoBehaviour
             hasCollideX = false;
         }
 
+    }
+
+    public void Move(float _x)
+    {
+        if (timeSinceLastWallJump < timeBetweenWallJumpAndMovement) return;
+
+        x = _x;
 
         // Move the player when there is no obstacle and an input
         if (!isCollidingWithObstacle)
         {
             transform.Translate(new Vector3(x, 0, 0) * environmentalSpeedX * Time.deltaTime);
-            if (isGrounded && movementParticleSystem.isStopped && x != 0)
-            {
-                movementParticleSystem.Play();
-                Debug.Log("PLAY" + "isGrounded : " + isGrounded + "isStopped : " + movementParticleSystem.isStopped + "x : " + x);
-            }
-            else if ((!isGrounded || x == 0) && movementParticleSystem.isPlaying)
-            {
-                movementParticleSystem.Stop();
-                Debug.Log("STOP" + "isGrounded : " + isGrounded + "isStopped : " + movementParticleSystem.isStopped + "x : " + x);
-            }
-        }
-        else
-        {
-            movementParticleSystem.Stop();
-            Debug.Log("STOP" + "isGrounded : " + isGrounded + "isStopped : " + movementParticleSystem.isStopped + "x : " + x);
         }
         if(x != 0)
         {
-            playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * roatationWhenMoving);
+            playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * rotationWhenMoving);
         }
         else
         {
@@ -397,22 +432,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // This is for inertia
-        ManageInertia(x);
+        ManageInertia();
     }
 
-    private void PlayerCollideWhileHorizontalMovement(float raycastDirectionX)
-    {
-        isCollidingWithObstacle = true;
-        if (hasCollideX == false) // Tp the player to the obstacle if it's his future position (only once)
-        {
-            hasCollideX = true;
-            transform.position = new Vector3(
-                hitReturn.point.x - replacementPositionXOffset - Mathf.Sign(raycastDirectionX) * boxCollider.size.x / 2,
-                transform.position.y, transform.position.z);
-        }
-    }
 
-    private void ManageInertia(float x)
+    private void ManageInertia()
     {
         if (x == 0)
         {
@@ -428,10 +452,12 @@ public class PlayerMovement : MonoBehaviour
 
     private bool DetectCollision(Vector3 startPosition, Vector3 raycastDirection, float raycastLength, string targetTag)
     {
-        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength);
+        //Only detect Default layer
+        RaycastHit2D hit = Physics2D.Raycast(startPosition, raycastDirection, raycastLength, LayerMask.GetMask("Default"));
 
         if (hit.collider != null)
         {
+
             if (hit.collider.gameObject.tag == targetTag)
             {
                 hitReturn = hit;
@@ -516,5 +542,12 @@ public class PlayerMovement : MonoBehaviour
                 ? -wallJumpHorizontalForce
                 : wallJumpHorizontalForce; // The force depends on the direction of the player before jumping
         transform.Translate(new Vector3(horizontalMovement, 0, 0) * Time.deltaTime);
+    }
+    public void Die()
+    {
+        isDead = true;
+        playerAnim.SetTrigger("Die");
+        chromaticAberration.intensity.value = 0;
+        lensDistortion.intensity.value = 0;
     }
 }
