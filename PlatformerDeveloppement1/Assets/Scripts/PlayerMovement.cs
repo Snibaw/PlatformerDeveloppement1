@@ -83,6 +83,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Other")]
     [SerializeField] private float timeBtwRedAndWhiteTrailRenderer = 5f;
     private TrailRenderer trailRenderer;
+    [SerializeField]private ParticleSystem movementParticleSystem;
+    [SerializeField] private ParticleSystem jumpParticleSystem;
+    [SerializeField] private ParticleSystem landParticleSystem;
     [SerializeField] private GameObject playerSprite;
     [SerializeField] private float rotationWhenMoving = 10f;
     [SerializeField] private Animator playerAnim;
@@ -256,6 +259,7 @@ public class PlayerMovement : MonoBehaviour
         {
             playerAnim.SetTrigger("Land");
             soundEffectManager.PlaySoundEffect("Land");
+            landParticleSystem.Play();
         }
     }
 
@@ -421,6 +425,18 @@ public class PlayerMovement : MonoBehaviour
         if (!isCollidingWithObstacle)
         {
             transform.Translate(new Vector3(x, 0, 0) * environmentalSpeedX * Time.deltaTime);
+            if (isGrounded && x != 0)
+            {
+                movementParticleSystem.enableEmission = true;
+            }
+            else if ((!isGrounded || x == 0))
+            {
+                movementParticleSystem.enableEmission = false;
+            }
+        }
+        else
+        {
+            movementParticleSystem.enableEmission = false;
         }
         if(x != 0)
         {
@@ -517,6 +533,7 @@ public class PlayerMovement : MonoBehaviour
 
         playerAnim.SetTrigger("Jump");
         soundEffectManager.PlaySoundEffect("Jump");
+        jumpParticleSystem.Play();
 
         Jump();
     }

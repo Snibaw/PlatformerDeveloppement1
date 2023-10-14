@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ab75a7c-bceb-41c5-9b01-e4df3e8ccf62" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/ConveyorBelt.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Fan.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/MovingPlatform.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/MovingPlatform.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Platform.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Platform.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/FanBehaviour.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/FanBehaviour.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PlatformerDeveloppement1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PlatformerDeveloppement1/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Lift Up Platform.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Fan.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Lift Up Platform.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/ConveyorBelt.prefab.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PlayerMovement.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +18,12 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../Platformer/Assets/LiftPlatform.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/ConveyorBeltBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/JIN/PlatformerDeveloppement1/PlatformerDeveloppement1/Assets/Scripts/PlayerMovement.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -107,6 +102,7 @@
       <updated>1696421990410</updated>
       <workItem from="1696421994811" duration="6344000" />
       <workItem from="1696498288882" duration="3160000" />
+      <workItem from="1697247257391" duration="2568000" />
     </task>
     <servers />
   </component>
