@@ -68,6 +68,8 @@ public class CanvasManager : MonoBehaviour
         //set a new selected object
         EventSystem.current.SetSelectedGameObject(isGameFinished ? retryButton : continueButton);
 
+        if(!isGamePaused) EventSystem.current.SetSelectedGameObject(null);
+
     }
     public void ResumeGame()
     {
