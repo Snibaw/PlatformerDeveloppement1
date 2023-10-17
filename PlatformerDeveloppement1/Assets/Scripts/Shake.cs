@@ -7,6 +7,8 @@ public class Shake : MonoBehaviour
     public AnimationCurve curve;
     public IEnumerator Shaking(float duration)
     {
+        if(!ToggleMenu.instance.isDashEffectEnabled)
+            yield break;
         Vector3 originalPos = transform.localPosition;
         float elapsed = 0.0f;
 

@@ -13,17 +13,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float maxSpeed = 5;
 
-    [SerializeField] private float replacementPositionXOffset = -0.1f;
-    [SerializeField] private float raycastPositionXOffset = 0.1f;
+    private float replacementPositionXOffset = 0;
+    private float raycastPositionXOffset = 0.05f;
     [SerializeField] private float inertiaValue = 8;
     private float currentMaxSpeed;
     private float speed;
     private float lastX;
     private float x;
     private BoxCollider2D boxCollider;
-    [SerializeField] private bool isCollidingWithObstacle = false;
-    [SerializeField] private bool isCollidingWithBothRayOnObstacle = false;
+    private bool isCollidingWithObstacle = false;
+    private bool isCollidingWithAllRayOnObstacle = false;
     private bool hasCollideX = false;
+
+    [SerializeField] private float sprintSpeed = 6;
 
     [Header("Dash")]
     //Dash
@@ -31,23 +33,24 @@ public class PlayerMovement : MonoBehaviour
     private float dashDistance = 10;
 
     [SerializeField] private float dashCooldown = 1f;
-    [SerializeField] private bool isDashing = false;
+    private bool isDashing = false;
     [SerializeField] private float dashDuration = 0.1f;
-    [SerializeField] private float currentDashDuration = 0;
+    private float currentDashDuration = 0;
     [SerializeField] private float cameraShakeDurationWhenDash = 0.2f;
     private float dashCooldownTimer = 0;
-    [Header("Sprint")] [SerializeField] private float sprintSpeed = 8;
+    
 
-    [Header("Jump")] [SerializeField] private float replacementPositionYOffset = 0.1f;
-    [SerializeField] private float raycastPositionYOffset = 0.1f;
-    [SerializeField] private bool isGrounded;
-    private bool wasGrounded;
+    [Header("Jump")] 
     [SerializeField] private float maxJumpPower = 2;
+    private float replacementPositionYOffset = 0.3f;
+    private float raycastPositionYOffset = 0f;
+    private bool isGrounded;
+    private bool wasGrounded;
     [SerializeField] private float decayJumpPower = 0.1f;
     private float jumpPower = 0;
     [SerializeField] private float maxJumpTime = 1;
     [SerializeField] private float gravity = 9.81f;
-    [SerializeField] private float gravityMultiplier = 1;
+    private float gravityMultiplier = 1;
     private bool isGravityOn = true;
     private float speedY;
     private bool canDoubleJump = true;
@@ -59,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Environmental Speed")] [SerializeField]
     private float aerialHorizontalSpeedMultiplier = 0.7f;
     [SerializeField] private float slidingSpeedY = 0.3f;
-    public bool isSliding = false;
+    [HideInInspector] public bool isSliding = false;
     private float environmentalSpeedX = 0;
     private float environmentalSpeedY = 0;
     private Vector3 platformDirection;
@@ -72,12 +75,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float timeBetweenWallJumpAndMovement = 0.2f;
     private float timeSinceLastWallJump = 0;
 
-    [Header("CoyotteTime & bufferJump")] [SerializeField]
+    [Header("CoyotteTime & bufferJumpTime")] [SerializeField]
     private float coyotteTime = 0.2f;
 
-    [SerializeField] private float bufferJump = 0.2f;
+    [SerializeField] private float bufferJumpTime = 0.2f;
     private float coyotteTimeTimer = 0;
-    private float bufferJumpTimer = 0;
+    private float bufferJumpTimeTimer = 0;
     RaycastHit2D hitReturn;
     // [SerializeField] private float testvalue = 1;
     [Header("Other")]
@@ -87,10 +90,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private ParticleSystem jumpParticleSystem;
     [SerializeField] private ParticleSystem landParticleSystem;
     [SerializeField] private GameObject playerSprite;
-    [SerializeField] private float rotationWhenMoving = 10f;
+    [SerializeField] private float spriteRotationWhenMoving = 10f;
     [SerializeField] private Animator playerAnim;
-
-    [Header("EchoEffect")]
     [SerializeField] private float timeBtwEchoes = 0.1f;
     [SerializeField] private int numberOfEchoes = 5;
     private EchoEffect echoEffect;
@@ -100,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Color noDashColor;
     private Color dashColor;
     private SpriteRenderer playerSpriteComponent;
-    public bool isDead = false;
+    [HideInInspector] public bool isDead = false;
 
     
 
@@ -132,13 +133,20 @@ public class PlayerMovement : MonoBehaviour
         dashCooldownTimer -= Time.deltaTime;
         timeSinceLastWallJump += Time.deltaTime;
         coyotteTimeTimer -= Time.deltaTime;
-        bufferJumpTimer -= Time.deltaTime;
-        if(dashCooldownTimer <= 0)
-            playerSpriteComponent.color = dashColor;
-        else
-            playerSpriteComponent.color = Color.Lerp(dashColor, noDashColor, Mathf.PingPong(3*Time.time, 1));
+        bufferJumpTimeTimer -= Time.deltaTime;
+        if(ToggleMenu.instance.isDashEffectEnabled)
+        {
+            if(dashCooldownTimer <= 0)
+                playerSpriteComponent.color = dashColor;
+            else
+                playerSpriteComponent.color = Color.Lerp(dashColor, noDashColor, Mathf.PingPong(3*Time.time, 1));
+        }
 
-        DecayTrailRendererColor();
+        trailRenderer.enabled = ToggleMenu.instance.isLineRendererEnabled;
+        if(ToggleMenu.instance.isLineRendererEnabled)
+        {
+            DecayTrailRendererColor();
+        }
 
         GroundManagement();
         if(speedY >=0)
@@ -162,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isGrounded)
         {
 
-            if (isCollidingWithBothRayOnObstacle && (speedY < 0 ||environmentalSpeedY < 0)) // If the player is sliding on a wall, the speed must be constant and not decrease
+            if (isCollidingWithAllRayOnObstacle && (speedY < 0 ||environmentalSpeedY < 0)) // If the player is sliding on a wall, the speed must be constant and not decrease
             {
                 isSliding = true;
             }
@@ -180,7 +188,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         environmentalSpeedY =
-            !isGrounded && isCollidingWithBothRayOnObstacle && speedY < 0
+            !isGrounded && isCollidingWithAllRayOnObstacle && speedY < 0
                 ? slidingSpeedY
                 : speedY; // If the player is sliding on a wall, apply a sliding speed multiplier
         transform.Translate(new Vector3(0, environmentalSpeedY, 0));
@@ -231,8 +239,8 @@ public class PlayerMovement : MonoBehaviour
                 transform.position += platformDirection * platformSpeed * Time.deltaTime;
             }
 
-            //Start coyotteTime and Check for bufferJump
-            if (bufferJumpTimer > 0)
+            //Start coyotteTime and Check for bufferJumpTime
+            if (bufferJumpTimeTimer > 0)
             {
                 PressJumpButton();
             }
@@ -257,9 +265,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if(!wasGrounded && isGrounded)
         {
-            playerAnim.SetTrigger("Land");
-            soundEffectManager.PlaySoundEffect("Land");
-            landParticleSystem.Play();
+            if(ToggleMenu.instance.isSpriteMovementEnabled) playerAnim.SetTrigger("Land");
+            if(ToggleMenu.instance.isSoundEffectsEnabled) soundEffectManager.PlaySoundEffect("Land");
+            if(ToggleMenu.instance.isParticlesEnabled) landParticleSystem.Play();
         }
     }
 
@@ -309,10 +317,16 @@ public class PlayerMovement : MonoBehaviour
 
             StartCoroutine(Camera.main.GetComponent<Shake>().Shaking(cameraShakeDurationWhenDash));
             echoEffect.SetStartPos(transform.position);
-            soundEffectManager.PlaySoundEffect("Dash");
-            chromaticAberration.intensity.value = 0.5f;
-            lensDistortion.intensity.value = -0.3f;
-            playerSpriteComponent.color = noDashColor;
+            if(ToggleMenu.instance.isDashEffectEnabled)
+            {
+                chromaticAberration.intensity.value = 0.5f;
+                lensDistortion.intensity.value = -0.3f;
+                playerSpriteComponent.color = noDashColor;
+            }     
+            if(ToggleMenu.instance.isSoundEffectsEnabled)
+            {
+                soundEffectManager.PlaySoundEffect("Dash");
+            }
         }
     }
 
@@ -398,17 +412,17 @@ public class PlayerMovement : MonoBehaviour
 
             if(collidedWithRay2)
             {
-                isCollidingWithBothRayOnObstacle = true;
+                isCollidingWithAllRayOnObstacle = true;
             }
 
             else
             {
-                isCollidingWithBothRayOnObstacle = false;
+                isCollidingWithAllRayOnObstacle = false;
             }
         }
         else
         {
-            isCollidingWithBothRayOnObstacle = false;
+            isCollidingWithAllRayOnObstacle = false;
             isCollidingWithObstacle = false;
             hasCollideX = false;
         }
@@ -425,26 +439,21 @@ public class PlayerMovement : MonoBehaviour
         if (!isCollidingWithObstacle)
         {
             transform.Translate(new Vector3(x, 0, 0) * environmentalSpeedX * Time.deltaTime);
-            if (isGrounded && x != 0)
-            {
-                movementParticleSystem.enableEmission = true;
-            }
-            else if ((!isGrounded || x == 0))
-            {
-                movementParticleSystem.enableEmission = false;
-            }
         }
         else
         {
-            movementParticleSystem.enableEmission = false;
+            if(ToggleMenu.instance.isParticlesEnabled) movementParticleSystem.enableEmission = false;
         }
-        if(x != 0)
+        if(ToggleMenu.instance.isSpriteMovementEnabled)
         {
-            playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * rotationWhenMoving);
-        }
-        else
-        {
-            playerSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
+            if(x != 0)
+            {
+                playerSprite.transform.rotation = Quaternion.Euler(0, 0, -x * spriteRotationWhenMoving);
+            }
+            else
+            {
+                playerSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
         }
 
         // This is for inertia
@@ -456,6 +465,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (x == 0)
         {
+            if(ToggleMenu.instance.isParticlesEnabled) movementParticleSystem.enableEmission = false;
             speed = Mathf.Max(0, speed - Time.deltaTime * inertiaValue);
             if (!isCollidingWithObstacle) transform.Translate(new Vector3(lastX, 0, 0) * speed * Time.deltaTime);
         }
@@ -463,6 +473,14 @@ public class PlayerMovement : MonoBehaviour
         {
             speed = Mathf.Min(currentMaxSpeed, speed + Time.deltaTime * inertiaValue);
             lastX = x;
+            if(speed == currentMaxSpeed && isGrounded)
+            {
+                if(ToggleMenu.instance.isParticlesEnabled) movementParticleSystem.enableEmission = true;
+            }
+            else
+            {
+                if(ToggleMenu.instance.isParticlesEnabled) movementParticleSystem.enableEmission = false;
+            }
         }
     }
 
@@ -487,7 +505,7 @@ public class PlayerMovement : MonoBehaviour
     public void Sprint()
     {
         currentMaxSpeed = sprintSpeed;
-        if(trailRenderer.startColor != Color.red)
+        if(trailRenderer.startColor != Color.red && ToggleMenu.instance.isLineRendererEnabled)
         {
             trailRenderer.startColor = Color.yellow;
         }
@@ -496,7 +514,7 @@ public class PlayerMovement : MonoBehaviour
     public void StopSprint() // decays the sprint speed
     {
         currentMaxSpeed = Mathf.Max(maxSpeed, currentMaxSpeed -= Time.deltaTime * inertiaValue);
-        if(trailRenderer.startColor != Color.red)
+        if(trailRenderer.startColor != Color.red && ToggleMenu.instance.isLineRendererEnabled)
         {
             trailRenderer.startColor = Color.white;
         }
@@ -516,7 +534,7 @@ public class PlayerMovement : MonoBehaviour
             if (!canDoubleJump)
             {
                 //Avoid hold jump button condition
-                bufferJumpTimer = bufferJump;
+                bufferJumpTimeTimer = bufferJumpTime;
                 timeJumpButtonPressed = maxJumpTime;
                 return;
             }
@@ -531,9 +549,9 @@ public class PlayerMovement : MonoBehaviour
         timeJumpButtonPressed = Time.deltaTime;
         jumpPower = maxJumpPower;
 
-        playerAnim.SetTrigger("Jump");
-        soundEffectManager.PlaySoundEffect("Jump");
-        jumpParticleSystem.Play();
+        if(ToggleMenu.instance.isSpriteMovementEnabled) playerAnim.SetTrigger("Jump");
+        if(ToggleMenu.instance.isSoundEffectsEnabled) soundEffectManager.PlaySoundEffect("Jump");
+        if(ToggleMenu.instance.isParticlesEnabled) jumpParticleSystem.Play();
 
         Jump();
     }
@@ -552,7 +570,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         speedY = jumpPower;
-        trailRenderer.startColor = Color.red;
+        if(ToggleMenu.instance.isLineRendererEnabled) trailRenderer.startColor = Color.red;
         if (wallJumpHorizontalForce == 0) return;
         float horizontalMovement =
             wallIsOnTheRight

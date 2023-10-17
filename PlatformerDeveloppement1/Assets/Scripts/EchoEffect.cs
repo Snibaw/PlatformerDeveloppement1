@@ -36,6 +36,9 @@ public class EchoEffect : MonoBehaviour
     }
     public IEnumerator SpawnEveryEchoes(float timeBtwSpawn, int numberOfEchoes)
     {
+        if(!ToggleMenu.instance.isDashEffectEnabled)
+            yield break;
+
         Color echoColorTemp = echoColor;
         for (int i = 0; i < numberOfEchoes; i++)
         {
