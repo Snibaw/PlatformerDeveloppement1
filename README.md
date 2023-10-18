@@ -1,2 +1,2 @@
 # PlatformerDeveloppement1
- L’objectif est de programmer le contrôle d’un game object basique dans un environnement type jeu de plateforme 2D, sans utiliser les packages unity dédiés.
+The aim of this project is to program the control of a basic game object in a 2D platform game environment, without using dedicated unity packages.
