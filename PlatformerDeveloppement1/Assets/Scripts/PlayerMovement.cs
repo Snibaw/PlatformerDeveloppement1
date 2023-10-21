@@ -216,6 +216,8 @@ public class PlayerMovement : MonoBehaviour
             Debug.DrawRay(raycastPosition, new Vector3(0, -1, 0) * raycastLength, Color.red);
             if(DetectCollision(raycastPosition, new Vector3(0, -1, 0), raycastLength, "Obstacle"))
             {
+                if (hitReturn.collider.gameObject.name == "DownPlatform" && Input.GetAxisRaw("Vertical") < 0)
+                    continue;
                 hasCollided = true;
             }
         }
