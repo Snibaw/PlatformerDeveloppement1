@@ -22,7 +22,7 @@ public class EndTimer : MonoBehaviour
             if(hasPlayerFinished) return;
             hasPlayerFinished = true;
             endParticle.Play();
-            soundEffectManager.PlaySoundEffect("Confetti",0.5f);
+            if(PlayerPrefs.GetInt("isSoundEffectsEnabled") == 1 ? true: false) soundEffectManager.PlaySoundEffect("Confetti",0.5f);
             timerManager.EndTimer(true);
         }
     }
