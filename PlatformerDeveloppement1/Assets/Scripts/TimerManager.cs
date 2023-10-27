@@ -12,6 +12,8 @@ public class TimerManager : MonoBehaviour
     private float startTime = 0;
     private int timerActive;
     private bool timerIsRunning = false;
+    [SerializeField] private float timeBtnPressedToResetTimer = 0.5f;
+    private float timeBtnPressed = 0;
 
     private void Start()
     {
@@ -25,9 +27,19 @@ public class TimerManager : MonoBehaviour
             timeText.text = "Time: " + (Time.time - startTime).ToString("F2");
         }
     }
-    public void ResetTimer()
+    public void ResetTimer(bool isPressed)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if(!isPressed) timeBtnPressed = 0;
+        else
+        {
+            timeBtnPressed += Time.deltaTime;
+            if (timeBtnPressed > timeBtnPressedToResetTimer)
+            {
+                Time.timeScale = 1;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+        }
+        
     }
     public void ShowOrHideTimer()
     {

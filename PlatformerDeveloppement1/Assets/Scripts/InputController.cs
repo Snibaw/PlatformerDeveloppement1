@@ -57,10 +57,7 @@ public class InputController : MonoBehaviour
         {
             canvasManager.PlayerPressPauseButton();
         }
-        if(Input.GetButtonDown("ResetTimer"))
-        {
-            timerManager.ResetTimer();
-        }
+        timerManager.ResetTimer(Input.GetButton("ResetTimer"));
         if(Input.GetButtonDown("Select"))
         {
             showButtonsHelp.ShowHideExplanation();
