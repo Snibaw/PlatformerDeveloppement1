@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ab75a7c-bceb-41c5-9b01-e4df3e8ccf62" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PlatformerDeveloppement1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PlatformerDeveloppement1/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/EndTimer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EndTimer.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,7 +56,7 @@
 }</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="$PROJECT_DIR$/Build/FinalV2\PlatformerDeveloppement1.exe" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/Build/FinalV2\NuloBaby.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="D:\Github_Projects\PlatformerDeveloppement1\PlatformerDeveloppement1\Build\V1" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -111,7 +112,7 @@
       <workItem from="1696498288882" duration="3160000" />
       <workItem from="1697247257391" duration="2568000" />
       <workItem from="1698249620034" duration="509000" />
-      <workItem from="1698416781086" duration="1680000" />
+      <workItem from="1698416781086" duration="2142000" />
     </task>
     <servers />
   </component>

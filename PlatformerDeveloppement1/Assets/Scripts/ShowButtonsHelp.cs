@@ -12,8 +12,11 @@ public class ShowButtonsHelp : MonoBehaviour
     void Start()
     {
         selectText.text = "Show Buttons Help";
-        explanationParent.SetActive(false);
-   }
+        explanationActive = !PlayerPrefs.HasKey("HasPressedHelpOnce");
+        explanationParent.SetActive(explanationActive);
+        selectText.text = explanationActive ? "Hide Buttons Help" : "Show Buttons Help";
+
+    }
 
     public void ShowHideExplanation()
     {
